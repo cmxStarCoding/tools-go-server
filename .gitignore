@@ -1,0 +1,4 @@
+common/config.ini
+core/gin.log
+core/core
+go.sum
