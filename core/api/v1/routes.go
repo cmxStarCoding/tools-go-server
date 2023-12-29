@@ -20,10 +20,11 @@ func SetupRoutes(r *gin.Engine) {
 	}
 	api := r.Group("/api/v1")
 	{
-		api.Use(middleware.JWTMiddleware(),middleware.TranslationsMiddleware())
+		api.Use(middleware.JWTMiddleware(), middleware.TranslationsMiddleware())
 		userController := controllers.UserController{}
 		api.GET("/user/:id", userController.GetUserByID)
 		// 添加其他路由...
+		categoryController := controllers.CategoryController{}
+		api.GET("/category/list", categoryController.GetCategoryList)
 	}
 }
-

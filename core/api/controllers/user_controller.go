@@ -9,39 +9,24 @@ import (
 	"time"
 	"tools/core/api/services"
 	"tools/core/api/utils"
-	"tools/core/api/validator"
+	"tools/core/api/validator/user"
 	//"tools/core/api/utils"
 )
 
 // UserController 用户控制器
 type UserController struct{}
 
-// GetUserByID 根据用户ID获取用户信息
-func (c *UserController) GetUserByID(ctx *gin.Context) {
-	// 从请求参数中获取用户ID
-	userID := ctx.Param("id")
-
-	//fmt.Println(ctx.Get("UserID"))
-	//fmt.Println(ctx.Get("Nickname"))
-
-	// 调用用户服务获取用户信息
-	user := services.UserService{}.GetUserByID(userID)
-
-	// 返回JSON数据
-	ctx.JSON(200, user)
-}
-
 // UserLogin 用户登录
 func (c *UserController) UserLogin(ctx *gin.Context) {
 	// 验证用户请求参数
-	request, err := validator.ValidateUserLogin(ctx)
+	request, err := user.ValidateUserLogin(ctx)
 	if err != nil {
-		ctx.JSON(400, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	// 调用用户服务获取用户信息
-	user, userErr := services.UserService{}.UserLogin(request.Phone, request.Password)
+	UserInfo, userErr := services.UserService{}.UserLogin(request.Phone, request.Password)
 	if userErr != nil {
 		// 根据不同的错误类型返回相应的 HTTP 响应
 		switch userErr {
@@ -54,13 +39,28 @@ func (c *UserController) UserLogin(ctx *gin.Context) {
 			return
 		}
 	}
-	fmt.Println(user.ID, user.Nickname)
-	jwtToken, err := utils.GenerateToken(user.ID, user.Nickname)
+	fmt.Println(UserInfo.ID, UserInfo.Nickname)
+	jwtToken, err := utils.GenerateToken(UserInfo.ID, UserInfo.Nickname)
 
 	// 返回JSON数据
 	ctx.JSON(200, gin.H{
 		"jtw_token": jwtToken,
 		"expire":    time.Now().Add(7 * 24 * time.Hour),
-		"user":      user,
+		"UserInfo":  UserInfo,
 	})
+}
+
+// GetUserByID 根据用户ID获取用户信息
+func (c *UserController) GetUserByID(ctx *gin.Context) {
+	// 从请求参数中获取用户ID
+	userID := ctx.Param("id")
+
+	//fmt.Println(ctx.Get("UserID"))
+	//fmt.Println(ctx.Get("Nickname"))
+
+	// 调用用户服务获取用户信息
+	userInfo := services.UserService{}.GetUserByID(userID)
+
+	// 返回JSON数据
+	ctx.JSON(200, userInfo)
 }

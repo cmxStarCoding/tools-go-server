@@ -1,6 +1,6 @@
 // core/validator/user_validator.go
 
-package validator
+package user
 
 import (
 	"fmt"
