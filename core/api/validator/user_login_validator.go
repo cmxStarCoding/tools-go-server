@@ -7,13 +7,14 @@ import (
 	"github.com/gin-gonic/gin"
 	ut "github.com/go-playground/universal-translator"
 	"gopkg.in/go-playground/validator.v9"
+	"reflect"
 )
 
 type UserLoginRequest struct {
 	//Username string `json:"username" binding:"required,min=4,max=20"`
 	//Phone   string  `json:"phone" form:"phone" validate:"required,email"`
-	Phone    string  `json:"phone" form:"phone" validate:"required"`
-	Password string  `json:"password" form:"phone" validate:"required,min=6"`
+	Phone    string `json:"phone" form:"phone" validate:"required" comment:"手机号"`
+	Password string `json:"password" form:"password" validate:"required,min=6" comment:"密码"`
 }
 
 func ValidateUserLogin(c *gin.Context) (*UserLoginRequest, error) {
@@ -24,9 +25,12 @@ func ValidateUserLogin(c *gin.Context) (*UserLoginRequest, error) {
 	validatorInstance, _ := Validate.(*validator.Validate)
 
 	if err := c.ShouldBindJSON(&request); err != nil {
-		return nil,err
+		return nil, err
 	}
-
+	// 收集结构体中的comment标签，用于替换英文字段名称，这样返回错误就能展示中文字段名称了
+	validatorInstance.RegisterTagNameFunc(func(fld reflect.StructField) string {
+		return fld.Tag.Get("comment")
+	})
 	//自定义错误语句
 	//validatorInstance.RegisterTranslation("required", utTrans, func(ut ut.Translator) error {
 	//	return ut.Add("required", "{0} 哈哈哈!", true) // see universal-translator for details
@@ -49,14 +53,14 @@ func ValidateUserLogin(c *gin.Context) (*UserLoginRequest, error) {
 
 	// 进行进一步的验证
 	err := validatorInstance.Struct(request) //这里的err是未翻译之前的
-	if  err != nil {
+	if err != nil {
 		errs := err.(validator.ValidationErrors)
 		var sliceErrs []string
 		for _, e := range errs {
 			sliceErrs = append(sliceErrs, e.Translate(utTrans))
 		}
-		return nil,fmt.Errorf(sliceErrs[0])
+		return nil, fmt.Errorf(sliceErrs[0])
 	}
 
-	return &request,nil
+	return &request, nil
 }

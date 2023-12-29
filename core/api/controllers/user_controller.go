@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"time"
 	"tools/core/api/services"
 	"tools/core/api/utils"
 	"tools/core/api/validator"
@@ -33,14 +34,14 @@ func (c *UserController) GetUserByID(ctx *gin.Context) {
 // UserLogin 用户登录
 func (c *UserController) UserLogin(ctx *gin.Context) {
 	// 验证用户请求参数
-	request,err := validator.ValidateUserLogin(ctx)
+	request, err := validator.ValidateUserLogin(ctx)
 	if err != nil {
 		ctx.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
 
 	// 调用用户服务获取用户信息
-	user, userErr := services.UserService{}.UserLogin(request.Phone)
+	user, userErr := services.UserService{}.UserLogin(request.Phone, request.Password)
 	if userErr != nil {
 		// 根据不同的错误类型返回相应的 HTTP 响应
 		switch userErr {
@@ -53,12 +54,13 @@ func (c *UserController) UserLogin(ctx *gin.Context) {
 			return
 		}
 	}
-	fmt.Println(user.ID,user.Nickname)
-	jwtToken,err := utils.GenerateToken(user.ID,user.Nickname)
+	fmt.Println(user.ID, user.Nickname)
+	jwtToken, err := utils.GenerateToken(user.ID, user.Nickname)
 
 	// 返回JSON数据
 	ctx.JSON(200, gin.H{
 		"jtw_token": jwtToken,
-		"expire": "User created successfully",
+		"expire":    time.Now().Add(7 * 24 * time.Hour),
+		"user":      user,
 	})
 }

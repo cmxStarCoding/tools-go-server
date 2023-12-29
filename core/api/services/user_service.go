@@ -4,18 +4,16 @@ import (
 	"errors"
 	"gorm.io/gorm"
 	"tools/common/database"
+	"tools/common/utils"
 	"tools/core/api/models"
 )
-
 
 var (
 	ErrUserNotFound = errors.New("user not found")
 )
 
-
 // UserService 用户服务
 type UserService struct{}
-
 
 // GetUserByID 根据用户ID获取用户信息
 func (s UserService) GetUserByID(userID string) *models.UserModel {
@@ -28,13 +26,13 @@ func (s UserService) GetUserByID(userID string) *models.UserModel {
 	return user
 }
 
-func (s UserService) UserLogin(phone string) (*models.UserModel, error) {
+func (s UserService) UserLogin(phone string, password string) (*models.UserModel, error) {
 	// 获取数据库连接
 	db := database.DB
 	user := &models.UserModel{}
-	result := db.Where("phone = ?",phone).First(user)
-	if result.Error != nil && errors.Is(result.Error, gorm.ErrRecordNotFound){
-		return nil,ErrUserNotFound
+	result := db.Where("phone = ?", phone).Where("password = ?", utils.Md5Hash(password)).First(user)
+	if result.Error != nil && errors.Is(result.Error, gorm.ErrRecordNotFound) {
+		return nil, ErrUserNotFound
 	}
-	return user,nil
+	return user, nil
 }
