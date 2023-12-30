@@ -46,12 +46,12 @@ func (c *UserController) UserLogin(ctx *gin.Context) {
 	ctx.JSON(200, gin.H{
 		"jtw_token": jwtToken,
 		"expire":    time.Now().Add(7 * 24 * time.Hour),
-		"UserInfo":  UserInfo,
+		"user_info": UserInfo,
 	})
 }
 
 // GetUserByID 根据用户ID获取用户信息
-func (c *UserController) GetUserByID(ctx *gin.Context) {
+func (c UserController) GetUserByID(ctx *gin.Context) {
 	// 从请求参数中获取用户ID
 	userID := ctx.Param("id")
 

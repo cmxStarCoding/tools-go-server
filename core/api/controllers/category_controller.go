@@ -11,7 +11,7 @@ import (
 type CategoryController struct{}
 
 // GetCategoryList 获取分类列表
-func (c *CategoryController) GetCategoryList(ctx *gin.Context) {
+func (c CategoryController) GetCategoryList(ctx *gin.Context) {
 	request, err := category.ValidateGetCategoryList(ctx)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})

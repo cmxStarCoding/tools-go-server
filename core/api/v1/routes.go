@@ -20,11 +20,16 @@ func SetupRoutes(r *gin.Engine) {
 	}
 	api := r.Group("/api/v1")
 	{
+		//使用中间价
 		api.Use(middleware.JWTMiddleware(), middleware.TranslationsMiddleware())
-		userController := controllers.UserController{}
-		api.GET("/user/:id", userController.GetUserByID)
-		// 添加其他路由...
-		categoryController := controllers.CategoryController{}
-		api.GET("/category/list", categoryController.GetCategoryList)
+		//获取登录用户详情
+		//userController := controllers.UserController{}
+		api.GET("/user/:id", controllers.UserController{}.GetUserByID)
+		//分类列表
+		//categoryController := controllers.CategoryController{}
+		api.GET("/category/list", controllers.CategoryController{}.GetCategoryList)
+		//图片贴图能力
+		api.POST("/pic/paste", controllers.PicPasteController{}.PicPaste)
+
 	}
 }
