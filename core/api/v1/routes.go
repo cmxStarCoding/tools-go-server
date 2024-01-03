@@ -12,12 +12,22 @@ import (
 // SetupRoutes 设置API路由
 func SetupRoutes(r *gin.Engine) {
 
-	apiv1 := r.Group("/api/v1").Use(middleware.TranslationsMiddleware())
+	apiV1 := r.Group("/api/v1").Use(middleware.TranslationsMiddleware())
 	{
-		apiv1.POST("/pic_paste_notify", controllers.PicPasteController{}.Notify)
-		apiv1.POST("/user/login", controllers.UserController{}.UserLogin)
-		apiv1.Use(middleware.JWTMiddleware()).GET("/user/:id", controllers.UserController{}.GetUserByID)
-		apiv1.Use(middleware.JWTMiddleware()).GET("/category/list", controllers.CategoryController{}.GetCategoryList)
-		apiv1.Use(middleware.JWTMiddleware()).POST("/pic/paste", controllers.PicPasteController{}.PicPaste)
+		//用户登录
+		apiV1.POST("/user/login", controllers.UserController{}.UserLogin)
+		//获取用户详情
+		apiV1.Use(middleware.JWTMiddleware()).GET("/user/:id", controllers.UserController{}.GetUserByID)
+
+		//分类列表
+		apiV1.Use(middleware.JWTMiddleware()).GET("/category/list", controllers.CategoryController{}.GetCategoryList)
+
+		//贴图服务
+		apiV1.Use(middleware.JWTMiddleware()).POST("/pic/paste", controllers.PicPasteController{}.PicPaste)
+		//贴图debug
+		apiV1.Use(middleware.JWTMiddleware()).POST("/pic_paste_debug", controllers.PicPasteController{}.Debug)
+		//贴图回调
+		apiV1.POST("/pic_paste_notify", controllers.PicPasteController{}.Notify)
+
 	}
 }

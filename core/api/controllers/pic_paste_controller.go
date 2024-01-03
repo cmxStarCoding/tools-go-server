@@ -41,3 +41,20 @@ func (c PicPasteController) Notify(ctx *gin.Context) {
 	// 返回JSON数据
 	ctx.JSON(200, "ok")
 }
+
+// Debug  图片贴图debug接口
+func (c PicPasteController) Debug(ctx *gin.Context) {
+	request, requestErr := pic.ValidateDebugRequest(ctx)
+	if requestErr != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": requestErr.Error()})
+		return
+	}
+	userId, _ := ctx.Value("UserId").(uint)
+	//debug
+	debugResult, err := services.PicPasteService{}.Debug(request, userId)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	ctx.JSON(200, debugResult)
+}

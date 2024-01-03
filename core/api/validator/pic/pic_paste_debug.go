@@ -10,22 +10,20 @@ import (
 	"reflect"
 )
 
-type Request struct {
-	OriginalImageUrl string           `json:"original_image_url" form:"original_image_url" validate:"required,uri" comment:"底图"`
-	CompressFileUrl  string           `json:"compress_file_url" form:"compress_file_url" validate:"required" comment:"贴图压缩包文件地址"`
-	X                uint             `json:"x" form:"x" validate:"required" comment:"x轴坐标"`
-	Y                uint             `json:"y" form:"y" validate:"required" comment:"y轴坐标"`
-	R                uint             `json:"r" form:"r" validate:"isRequiredR" comment:"半径"`
-	Type             uint             `json:"type" form:"type" validate:"required" comment:"贴图放大/缩小"`
-	Multiple         float32          `json:"multiple" form:"multiple" validate:"required" comment:"贴图放大缩小值"`
-	IsSquare         uint             `json:"is_square" form:"is_square" comment:"是否方形"`
-	SideLength       uint             `json:"side_length" form:"side_length" validate:"isRequiredSideLength" comment:"方形的变长"`
-	Aa               map[string]any   `json:"aa" form:"aa" comment:"字典测试"`
-	Da               []map[string]any `json:"dd" form:"dd" comment:"切片测试"`
+type DebugRequest struct {
+	OriginalImageUrl string  `json:"original_image_url" form:"original_image_url" validate:"required,uri" comment:"底图"`
+	StickImgUrl      string  `json:"stick_img_url" form:"stick_img_url" validate:"required" comment:"贴图地址"`
+	X                uint    `json:"x" form:"x" validate:"required" comment:"x轴坐标"`
+	Y                uint    `json:"y" form:"y" validate:"required" comment:"y轴坐标"`
+	R                uint    `json:"r" form:"r" validate:"isRequiredR" comment:"半径"`
+	Type             uint    `json:"type" form:"type" validate:"required" comment:"贴图放大/缩小"`
+	Multiple         float32 `json:"multiple" form:"multiple" validate:"required" comment:"贴图放大缩小值"`
+	IsSquare         uint    `json:"is_square" form:"is_square" comment:"是否方形"`
+	SideLength       uint    `json:"side_length" form:"side_length" validate:"isRequiredSideLength" comment:"方形的变长"`
 }
 
-func ValidateRequest(c *gin.Context) (*Request, error) {
-	var request Request
+func ValidateDebugRequest(c *gin.Context) (*DebugRequest, error) {
+	var request DebugRequest
 	utTrans := c.Value("Trans").(ut.Translator)
 
 	Validate, _ := c.Get("Validate")
@@ -38,7 +36,6 @@ func ValidateRequest(c *gin.Context) (*Request, error) {
 	validatorInstance.RegisterTagNameFunc(func(fld reflect.StructField) string {
 		return fld.Tag.Get("comment")
 	})
-
 	//圆形贴图的半径值验证
 	validatorInstance.RegisterValidation("isRequiredR", func(fl validator.FieldLevel) bool {
 		// 获取结构体中的字段
@@ -68,20 +65,13 @@ func ValidateRequest(c *gin.Context) (*Request, error) {
 		}
 		return true
 	})
-
 	// 进行进一步的验证
 	err := validatorInstance.Struct(request) //这里的err是未翻译之前的
 	if err != nil {
 		errs := err.(validator.ValidationErrors)
 		var sliceErrs []string
 		for _, e := range errs {
-			if e.Tag() == "isRequiredSideLength" {
-				sliceErrs = append(sliceErrs, "方形贴图不能没有边长值")
-			} else if e.Tag() == "isRequiredR" {
-				sliceErrs = append(sliceErrs, "圆形贴图不能没有半径值")
-			} else {
-				sliceErrs = append(sliceErrs, e.Translate(utTrans))
-			}
+			sliceErrs = append(sliceErrs, e.Translate(utTrans))
 		}
 		return nil, fmt.Errorf(sliceErrs[0])
 	}
