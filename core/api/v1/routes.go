@@ -11,11 +11,19 @@ import (
 
 // SetupRoutes 设置API路由
 func SetupRoutes(r *gin.Engine) {
-	api1 := r.Group("/api/v1")
+
+	apiNotify := r.Group("/api/v1")
 	{
-		api1.Use(middleware.TranslationsMiddleware())
+		apiNotify.Use(middleware.TranslationsMiddleware())
+		apiNotify.POST("/pic_paste_notify", controllers.PicPasteController{}.Notify)
+		// 添加其他路由...
+	}
+
+	apiNoLogin := r.Group("/api/v1")
+	{
+		apiNoLogin.Use(middleware.TranslationsMiddleware())
 		userController := controllers.UserController{}
-		api1.POST("/user/login", userController.UserLogin)
+		apiNoLogin.POST("/user/login", userController.UserLogin)
 		// 添加其他路由...
 	}
 	api := r.Group("/api/v1")

@@ -3,6 +3,7 @@ package controllers
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"tools/core/api/models"
 	"tools/core/api/services"
 	"tools/core/api/validator/pic"
 )
@@ -16,10 +17,27 @@ func (c PicPasteController) PicPaste(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": requestErr.Error()})
 		return
 	}
-	//
-	var returnData map[string]string
-	go services.PicPasteService{}.DoTask(request)
+	userId, _ := ctx.Value("UserId").(uint)
+	//创建任务
+	userTaskLog, err := services.UserTaskLogService{}.CreateTask(request, models.PicPasteMark, userId)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	go services.PicPasteService{}.DoTask(request, userTaskLog["task_id"])
+	// 返回JSON数据
+	ctx.JSON(200, userTaskLog)
+}
 
-	ctx.JSON(http.StatusBadRequest, returnData)
-	return
+// Notify 图片贴图python服务回调
+func (c PicPasteController) Notify(ctx *gin.Context) {
+	request, requestErr := pic.ValidateNotifyRequest(ctx)
+	if requestErr != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": requestErr.Error()})
+		return
+	}
+	services.UserTaskLogService{}.EditTaskStatus(request)
+
+	// 返回JSON数据
+	ctx.JSON(200, "ok")
 }

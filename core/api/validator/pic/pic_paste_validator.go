@@ -11,16 +11,18 @@ import (
 )
 
 type Request struct {
-	BatchNo          string  `json:"batch_no" form:"batch_no" validate:"required" comment:"批次号"`
-	OriginalImageUrl string  `json:"original_image_url" form:"original_image_url" validate:"required,uri" comment:"底图"`
-	CompressFileUrl  string  `json:"compress_file_url" form:"compress_file_url" validate:"required" comment:"贴图压缩包文件地址"`
-	X                uint    `json:"x" form:"x" validate:"required" comment:"x轴坐标"`
-	Y                uint    `json:"y" form:"y" validate:"required" comment:"y轴坐标"`
-	R                uint    `json:"r" form:"r" validate:"isRequiredR" comment:"半径"`
-	Type             uint    `json:"type" form:"type" validate:"required" comment:"贴图放大/缩小"`
-	Multiple         float32 `json:"multiple" form:"multiple" validate:"required" comment:"贴图放大缩小值"`
-	IsSquare         uint    `json:"is_square" form:"is_square" comment:"是否方形"`
-	SideLength       uint    `json:"side_length" form:"side_length" validate:"isRequiredSideLength" comment:"方形的变长"`
+	BatchNo          string           `json:"batch_no" form:"batch_no" validate:"required" comment:"批次号"`
+	OriginalImageUrl string           `json:"original_image_url" form:"original_image_url" validate:"required,uri" comment:"底图"`
+	CompressFileUrl  string           `json:"compress_file_url" form:"compress_file_url" validate:"required" comment:"贴图压缩包文件地址"`
+	X                uint             `json:"x" form:"x" validate:"required" comment:"x轴坐标"`
+	Y                uint             `json:"y" form:"y" validate:"required" comment:"y轴坐标"`
+	R                uint             `json:"r" form:"r" validate:"isRequiredR" comment:"半径"`
+	Type             uint             `json:"type" form:"type" validate:"required" comment:"贴图放大/缩小"`
+	Multiple         float32          `json:"multiple" form:"multiple" validate:"required" comment:"贴图放大缩小值"`
+	IsSquare         uint             `json:"is_square" form:"is_square" comment:"是否方形"`
+	SideLength       uint             `json:"side_length" form:"side_length" validate:"isRequiredSideLength" comment:"方形的变长"`
+	Aa               map[string]any   `json:"aa" form:"aa" comment:"字典测试"`
+	Da               []map[string]any `json:"dd" form:"dd" comment:"切片测试"`
 }
 
 func ValidateRequest(c *gin.Context) (*Request, error) {
