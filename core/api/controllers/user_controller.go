@@ -17,7 +17,7 @@ import (
 type UserController struct{}
 
 // UserLogin 用户登录
-func (c *UserController) UserLogin(ctx *gin.Context) {
+func (c UserController) UserLogin(ctx *gin.Context) {
 	// 验证用户请求参数
 	request, err := user.ValidateUserLogin(ctx)
 	if err != nil {
