@@ -47,14 +47,21 @@ func (s UserTaskLogService) CreateTask(request *pic.Request, toolsMark string, U
 }
 
 func (s UserTaskLogService) EditTaskStatus(request *pic.NotifyRequest) {
-
-	if request.Status == 1 {
-		userTaskLog := &models.UserTaskLogModel{}
-		database.DB.Where("task_id = ?", request.BatchNo).First(userTaskLog)
-		userTaskLog.Status = 1
-		database.DB.Save(userTaskLog)
-
-		//添加一条使用记录
-
+	if request.Status != 1 {
+		return
 	}
+	userTaskLog := &models.UserTaskLogModel{}
+	resultError := database.DB.Where("task_id = ?", request.BatchNo).First(userTaskLog)
+	if resultError.Error != nil {
+		return
+	}
+	jsonStr, _ := json.Marshal(request)
+	userTaskLog.Status = 1
+	userTaskLog.RequestResult = string(jsonStr)
+	database.DB.Save(userTaskLog)
+	//添加一条使用记录
+	userUseLog := &models.UserUseLogModel{}
+	userUseLog.ToolId = userTaskLog.ToolId
+	userUseLog.UserId = userTaskLog.UserId
+	database.DB.Save(userUseLog)
 }

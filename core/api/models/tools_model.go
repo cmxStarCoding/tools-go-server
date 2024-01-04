@@ -16,6 +16,7 @@ type ToolsModel struct {
 	Mark        string         `gorm:"column:mark" json:"mark"`
 	Name        string         `gorm:"column:name" json:"name"`
 	Description string         `gorm:"column:description" json:"description"`
+	CategoryId  uint           `gorm:"column:category_id" json:"category_id"`
 	CreatedAt   time.Time      `gorm:"column:created_at" json:"created_at"`
 	UpdatedAt   time.Time      `gorm:"column:updated_at" json:"updated_at"`
 	DeletedAt   gorm.DeletedAt `gorm:"column:deleted_at" json:"deleted_at"`

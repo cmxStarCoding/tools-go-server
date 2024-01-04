@@ -12,25 +12,24 @@ import (
 // SetupRoutes 设置API路由
 func SetupRoutes(r *gin.Engine) {
 
-	apiV1 := r.Group("/api/v1").Use(middleware.TranslationsMiddleware())
+	apiV1NoNeedLogin := r.Group("/api/v1").Use(middleware.TranslationsMiddleware())
 	{
-		//用户登录
-		apiV1.POST("/user/login", controllers.UserController{}.UserLogin)
-		//获取用户详情
-		apiV1.Use(middleware.JWTMiddleware()).GET("/user/:id", controllers.UserController{}.GetUserByID)
-
-		//分类列表
-		apiV1.Use(middleware.JWTMiddleware()).GET("/category/list", controllers.CategoryController{}.GetCategoryList)
-
-		//贴图服务
-		apiV1.Use(middleware.JWTMiddleware()).POST("/pic/paste", controllers.PicPasteController{}.PicPaste)
-		//贴图debug
-		apiV1.Use(middleware.JWTMiddleware()).POST("/pic_paste_debug", controllers.PicPasteController{}.Debug)
 		//贴图回调
-		apiV1.POST("/pic_paste_notify", controllers.PicPasteController{}.Notify)
-
+		apiV1NoNeedLogin.POST("/pic_paste_notify", controllers.PicPasteController{}.Notify)
+		//用户登录
+		apiV1NoNeedLogin.POST("/user/login", controllers.UserController{}.UserLogin)
+	}
+	apiV1NeedLogin := r.Group("/api/v1").Use(middleware.TranslationsMiddleware())
+	{
+		//获取用户详情
+		apiV1NeedLogin.Use(middleware.JWTMiddleware()).GET("/user/:id", controllers.UserController{}.GetUserByID)
+		//分类列表
+		apiV1NeedLogin.Use(middleware.JWTMiddleware()).GET("/category/list", controllers.CategoryController{}.GetCategoryList)
+		//贴图服务
+		apiV1NeedLogin.Use(middleware.JWTMiddleware()).POST("/pic/paste", controllers.PicPasteController{}.PicPaste)
+		//贴图debug
+		apiV1NeedLogin.Use(middleware.JWTMiddleware()).POST("/pic_paste_debug", controllers.PicPasteController{}.Debug)
 		//用户使用记录
-		apiV1.Use(middleware.JWTMiddleware()).GET("/user_use_log", controllers.UserUseLogController{}.GetUserUseLogList)
-
+		apiV1NeedLogin.Use(middleware.JWTMiddleware()).GET("/user_use_log", controllers.UserUseLogController{}.GetUserUseLogList)
 	}
 }
