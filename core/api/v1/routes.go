@@ -6,7 +6,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"tools/common/middleware"
 	"tools/core/api/controllers"
-	//"tools/common/middleware"
 )
 
 // SetupRoutes 设置API路由
@@ -26,11 +25,19 @@ func SetupRoutes(r *gin.Engine) {
 		apiV1NeedLogin.GET("/tools_list", controllers.ToolsController{}.GetToolsList)
 		//分类列表
 		apiV1NeedLogin.GET("/category/list", controllers.CategoryController{}.GetCategoryList)
+
 		//贴图服务
 		apiV1NeedLogin.POST("/pic/paste", controllers.PicPasteController{}.PicPaste)
 		//贴图debug
 		apiV1NeedLogin.POST("/pic_paste_debug", controllers.PicPasteController{}.Debug)
-		//用户使用记录
+		//用户贴图策略列表
+		apiV1NeedLogin.POST("/pic_paste_strategy_list", controllers.UserPicPasteStrategyController{}.GetUserPicPasteStrategyList)
+		//保存/更新 用户贴图策略
+		apiV1NeedLogin.POST("/pic_paste_strategy_save", controllers.UserPicPasteStrategyController{}.SaveUserPicPasteStrategy)
+		//删除用户贴图策略
+		apiV1NeedLogin.DELETE("/pic_paste_strategy_delete", controllers.UserPicPasteStrategyController{}.DeleteUserPicPasteStrategy)
+
+		//用户使用工具记录
 		apiV1NeedLogin.GET("/user_use_log", controllers.UserUseLogController{}.GetUserUseLogList)
 		//用户任务列表
 		apiV1NeedLogin.GET("/user_task_log", controllers.UserTaskLogController{}.GetUserTaskLogList)
