@@ -1,4 +1,4 @@
-package category
+package user
 
 import (
 	"fmt"
@@ -8,15 +8,15 @@ import (
 	"reflect"
 )
 
-type GetCategoryListRequest struct {
+type GetUserUseLogListRequest struct {
 	//Username string `json:"username" binding:"required,min=4,max=20"`
 	//Phone   string  `json:"phone" form:"phone" validate:"required,email"`
 	Page  uint `json:"page" form:"page" validate:"numeric" comment:"分页值"`
 	Limit uint `json:"limit" form:"limit" validate:"numeric" comment:"每页数据条数"`
 }
 
-func ValidateGetCategoryList(c *gin.Context) (*GetCategoryListRequest, error) {
-	var request GetCategoryListRequest
+func ValidateGetUserUseLogListRequest(c *gin.Context) (*GetUserUseLogListRequest, error) {
+	var request GetUserUseLogListRequest
 	utTrans := c.Value("Trans").(ut.Translator)
 	Validate, _ := c.Get("Validate")
 	validatorInstance, _ := Validate.(*validator.Validate)
@@ -29,6 +29,7 @@ func ValidateGetCategoryList(c *gin.Context) (*GetCategoryListRequest, error) {
 	})
 	// 进行进一步的验证
 	err := validatorInstance.Struct(request) //这里的err是未翻译之前的
+
 	if err != nil {
 		errs := err.(validator.ValidationErrors)
 		var sliceErrs []string

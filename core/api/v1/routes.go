@@ -29,5 +29,8 @@ func SetupRoutes(r *gin.Engine) {
 		//贴图回调
 		apiV1.POST("/pic_paste_notify", controllers.PicPasteController{}.Notify)
 
+		//用户使用记录
+		apiV1.Use(middleware.JWTMiddleware()).GET("/user_use_log", controllers.UserUseLogController{}.GetUserUseLogList)
+
 	}
 }

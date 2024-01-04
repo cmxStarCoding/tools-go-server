@@ -53,5 +53,8 @@ func (s UserTaskLogService) EditTaskStatus(request *pic.NotifyRequest) {
 		database.DB.Where("task_id = ?", request.BatchNo).First(userTaskLog)
 		userTaskLog.Status = 1
 		database.DB.Save(userTaskLog)
+
+		//添加一条使用记录
+
 	}
 }
