@@ -43,6 +43,8 @@ type UserTaskLogModel struct {
 	CreatedAt     time.Time      `gorm:"column:created_at" json:"created_at"`
 	UpdatedAt     time.Time      `gorm:"column:updated_at" json:"updated_at"`
 	DeletedAt     gorm.DeletedAt `gorm:"column:deleted_at" json:"deleted_at"`
+	User          UserModel      `json:"user"`
+	Tools         ToolsModel     `gorm:"foreignKey:ToolId" json:"tools"`
 }
 
 func (UserTaskLogModel) TableName() string {

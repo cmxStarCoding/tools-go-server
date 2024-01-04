@@ -7,9 +7,23 @@ import (
 	"tools/common/utils"
 	"tools/core/api/models"
 	"tools/core/api/validator/pic"
+	"tools/core/api/validator/user"
 )
 
 type UserTaskLogService struct{}
+
+func (s UserTaskLogService) GetUserTaskLogList(requestData *user.GetUserTaskLogListRequest, UserId uint) ([]models.UserTaskLogModel, error) {
+
+	var mapList []models.UserTaskLogModel
+
+	query := database.DB.Where("user_id = ?", UserId).Limit(int(requestData.Limit)).Offset((int(requestData.Page) - 1) * int(requestData.Limit))
+
+	if requestData.Status >= 0 {
+		query.Where("status = ?", requestData.Status)
+	}
+	query.Preload("Tools").Preload("User").Find(&mapList)
+	return mapList, nil
+}
 
 func (s UserTaskLogService) CreateTask(request *pic.Request, toolsMark string, UserId uint) (map[string]any, error) {
 	tools := &models.ToolsModel{}
