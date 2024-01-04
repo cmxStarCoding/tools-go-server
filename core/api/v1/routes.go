@@ -31,7 +31,7 @@ func SetupRoutes(r *gin.Engine) {
 		//贴图debug
 		apiV1NeedLogin.POST("/pic_paste_debug", controllers.PicPasteController{}.Debug)
 		//用户贴图策略列表
-		apiV1NeedLogin.POST("/pic_paste_strategy_list", controllers.UserPicPasteStrategyController{}.GetUserPicPasteStrategyList)
+		apiV1NeedLogin.GET("/user_pic_paste_strategy_list", controllers.UserPicPasteStrategyController{}.GetUserPicPasteStrategyList)
 		//保存/更新 用户贴图策略
 		apiV1NeedLogin.POST("/pic_paste_strategy_save", controllers.UserPicPasteStrategyController{}.SaveUserPicPasteStrategy)
 		//删除用户贴图策略
