@@ -8,6 +8,7 @@ import (
 	"io"
 	"math/rand"
 	"os"
+	"strconv"
 	"time"
 )
 
@@ -37,4 +38,9 @@ func GenerateUniqueRandomString() string {
 	// 使用时间戳生成唯一性
 	uniquePart := time.Now().UnixNano()
 	return fmt.Sprintf("%s%d", string(randomString), uniquePart)
+}
+
+func StringNumericToUnit(stringNumeric string) uint {
+	id64, _ := strconv.ParseUint(stringNumeric, 10, 64)
+	return uint(id64)
 }
