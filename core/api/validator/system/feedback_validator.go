@@ -1,4 +1,4 @@
-package tools
+package system
 
 import (
 	"fmt"
@@ -8,21 +8,17 @@ import (
 	"reflect"
 )
 
-type GetToolListRequest struct {
-	//Username string `json:"username" binding:"required,min=4,max=20"`
-	//Phone   string  `json:"phone" form:"phone" validate:"required,email"`
-	CategoryId  uint `json:"category_id" form:"category_id" validate:"numeric" comment:"分类id"`
-	IsRecommend uint `json:"is_recommend" form:"is_recommend" validate:"numeric" comment:"是否推荐"`
-	Page        uint `json:"page" form:"page" validate:"numeric" comment:"分页值"`
-	Limit       uint `json:"limit" form:"limit" validate:"numeric" comment:"每页数据条数"`
+type FeedbackRequest struct {
+	ContractPhone string `json:"contract_phone" form:"contract_phone" validate:"required,gte=11,lt=12" comment:"联系电话"`
+	Content       string `json:"content" form:"content" validate:"required,min=2,max=300" comment:"意见内容"`
 }
 
-func ValidateGetToolListRequest(c *gin.Context) (*GetToolListRequest, error) {
-	var request GetToolListRequest
+func ValidateFeedbackRequest(c *gin.Context) (*FeedbackRequest, error) {
+	var request FeedbackRequest
 	utTrans := c.Value("Trans").(ut.Translator)
 	Validate, _ := c.Get("Validate")
 	validatorInstance, _ := Validate.(*validator.Validate)
-	if err := c.ShouldBindQuery(&request); err != nil {
+	if err := c.ShouldBindJSON(&request); err != nil {
 		return nil, err
 	}
 	// 收集结构体中的comment标签，用于替换英文字段名称，这样返回错误就能展示中文字段名称了
@@ -39,13 +35,5 @@ func ValidateGetToolListRequest(c *gin.Context) (*GetToolListRequest, error) {
 		}
 		return nil, fmt.Errorf(sliceErrs[0])
 	}
-
-	if request.Page == 0 {
-		request.Page = 1
-	}
-	if request.Limit == 0 {
-		request.Limit = 10
-	}
-
 	return &request, nil
 }

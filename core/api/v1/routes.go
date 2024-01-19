@@ -51,5 +51,10 @@ func SetupRoutes(r *gin.Engine) {
 		apiV1NeedLogin.GET("/user_task_log", controllers.UserTaskLogController{}.GetUserTaskLogList)
 		//vip等级列表
 		apiV1NeedLogin.GET("/vip_level_list", controllers.VipLevelController{}.GetVipLevelList)
+
+		//更新日志
+		apiV1NeedLogin.GET("/system_update_log", controllers.SystemController{}.SystemUpdateLog)
+		//意见反馈
+		apiV1NeedLogin.POST("/feedback", controllers.SystemController{}.FeedBack)
 	}
 }

@@ -14,6 +14,11 @@ func (s ToolsService) GetToolsList(requestData *tools.GetToolListRequest) ([]mod
 	if requestData.CategoryId != 0 {
 		query = query.Where("category_id = ?", requestData.CategoryId)
 	}
+
+	if requestData.IsRecommend == 1 {
+		query = query.Where("is_recommend = ?", 1)
+	}
+
 	query.Find(&toolsMap)
 	return toolsMap, nil
 }
