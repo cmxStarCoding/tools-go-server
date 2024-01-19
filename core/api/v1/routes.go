@@ -33,6 +33,8 @@ func SetupRoutes(r *gin.Engine) {
 		apiV1NeedLogin.GET("/tools_list", controllers.ToolsController{}.GetToolsList)
 		//分类列表
 		apiV1NeedLogin.GET("/category/list", controllers.CategoryController{}.GetCategoryList)
+		//获取分类工具列表
+		apiV1NeedLogin.GET("/cate_tools_list", controllers.CategoryController{}.GetCategoryToolsList)
 
 		//贴图服务
 		apiV1NeedLogin.POST("/pic/paste", controllers.PicPasteController{}.PicPaste)

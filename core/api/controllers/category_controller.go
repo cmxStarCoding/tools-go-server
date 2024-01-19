@@ -25,3 +25,19 @@ func (c CategoryController) GetCategoryList(ctx *gin.Context) {
 	// 返回JSON数据
 	ctx.JSON(200, list)
 }
+
+// GetCategoryToolsList 获取分类工具列表
+func (c CategoryController) GetCategoryToolsList(ctx *gin.Context) {
+	request, err := category.ValidateGetCategoryToolsRequest(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	list, listErr := services.CategoryService{}.GetCategoryToolsList(request)
+	if listErr != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": listErr.Error()})
+		return
+	}
+	// 返回JSON数据
+	ctx.JSON(200, list)
+}

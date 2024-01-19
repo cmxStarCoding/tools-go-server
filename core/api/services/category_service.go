@@ -16,3 +16,11 @@ func (s CategoryService) GetCategoryList(requestData *category.GetCategoryListRe
 		Preload("Children").Find(&categoryList)
 	return categoryList, nil
 }
+
+func (s CategoryService) GetCategoryToolsList(requestData *category.GetCategoryToolsRequest) ([]models.CategoryModel, error) {
+	db := database.DB
+	var categoryList []models.CategoryModel
+	db.Where("pid = 0").Limit(int(requestData.Limit)).Offset((int(requestData.Page) - 1) * int(requestData.Limit)).
+		Preload("Tools").Find(&categoryList)
+	return categoryList, nil
+}
