@@ -2,7 +2,9 @@ package services
 
 import (
 	"errors"
+	"fmt"
 	"gorm.io/gorm"
+	"log"
 	"tools/common/database"
 	"tools/common/utils"
 	"tools/core/api/models"
@@ -38,7 +40,7 @@ func (s UserService) UserLogin(phone string, password string) (*models.UserModel
 	return user, nil
 }
 
-func (s UserService) EditUserProfile(requestData *user.EditRequest, userId uint) (*models.UserModel, error) {
+func (s UserService) EditUserProfile(requestData *user.EditProfileRequest, userId uint) (*models.UserModel, error) {
 
 	user := &models.UserModel{}
 
@@ -57,4 +59,30 @@ func (s UserService) EditUserProfile(requestData *user.EditRequest, userId uint)
 		database.DB.Save(user)
 	}
 	return user, nil
+}
+
+func (s UserService) EditPassword(requestData *user.EditPasswordRequest, UserId uint) (string, error) {
+
+	user := &models.UserFullModel{}
+	result := database.DB.Where("id = ?", UserId).Select("ID", "Password").First(user)
+	if result.Error != nil && errors.Is(result.Error, gorm.ErrRecordNotFound) {
+		return "ok", ErrUserNotFound
+	}
+	oldPasswordEncrypt := utils.Md5Hash(requestData.OldPassword)
+	log.Println("密码是", user.Password)
+	if oldPasswordEncrypt != user.Password {
+		return "ok", fmt.Errorf("老密码输入错误")
+	}
+
+	if requestData.NewPassword != requestData.ConfirmPassword {
+		return "ok", fmt.Errorf("新密码和确认密码不一致")
+	}
+
+	if oldPasswordEncrypt == utils.Md5Hash(requestData.NewPassword) {
+		return "ok", fmt.Errorf("新密码和老密码不能一致")
+	}
+
+	user.Password = requestData.NewPassword
+	database.DB.Save(user)
+	return "ok", nil
 }

@@ -85,5 +85,16 @@ func (c UserController) EditUserProfile(ctx *gin.Context) {
 }
 
 func (c UserController) EditUserPassword(ctx *gin.Context) {
-
+	request,err := user.ValidEditPasswordRequest(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error":err.Error()})
+		return
+	}
+	userId := ctx.Value("UserId").(uint)
+	editResult,editResultErr := services.UserService{}.EditPassword(request,userId)
+	if editResultErr != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": editResultErr.Error()})
+		return
+	}
+	ctx.JSON(http.StatusOK, editResult)
 }

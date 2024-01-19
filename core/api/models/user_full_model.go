@@ -5,10 +5,10 @@ import (
 )
 
 // UserModel 用户模型
-type UserModel struct {
+type UserFullModel struct {
 	ID            uint           `gorm:"column:id" json:"id"`
 	Phone         string         `gorm:"column:phone" json:"phone"`
-	Password      string         `gorm:"-" json:"password" `
+	Password      string         `gorm:"password" json:"password" `
 	Nickname      string         `gorm:"column:nickname" json:"nickname"`
 	AvatarUrl     string         `gorm:"column:avatar_url" json:"avatar_url"`
 	VipLevelId    uint16         `gorm:"column:vip_level_id" json:"vip_level_id"`
@@ -18,6 +18,6 @@ type UserModel struct {
 	DeletedAt     gorm.DeletedAt `gorm:"column:deleted_at" json:"deleted_at"`
 }
 
-func (UserModel) TableName() string {
+func (UserFullModel) TableName() string {
 	return "t_user"
 }

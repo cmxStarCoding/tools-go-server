@@ -11,7 +11,7 @@ import (
 	"tools/common/utils"
 )
 
-type EditRequest struct {
+type EditProfileRequest struct {
 	//Username string `json:"username" binding:"required,min=4,max=20"`
 	//Phone   string  `json:"phone" form:"phone" validate:"required,email"`
 	Type      uint   `json:"type" form:"type" validate:"required,checkTypeRange" comment:"类型"`
@@ -19,8 +19,8 @@ type EditRequest struct {
 	AvatarUrl string `json:"avatar_url" form:"avatar_url" validate:"checkAvatarUrl" comment:"头像"`
 }
 
-func ValidEditRequest(c *gin.Context) (*EditRequest, error) {
-	var request EditRequest
+func ValidEditRequest(c *gin.Context) (*EditProfileRequest, error) {
+	var request EditProfileRequest
 	utTrans := c.Value("Trans").(ut.Translator)
 
 	Validate, _ := c.Get("Validate")
