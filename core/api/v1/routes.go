@@ -19,10 +19,16 @@ func SetupRoutes(r *gin.Engine) {
 	}
 	apiV1NeedLogin := r.Group("/api/v1").Use(middleware.TranslationsMiddleware(), middleware.JWTMiddleware())
 	{
+		//上传文件
+		apiV1NeedLogin.POST("/upload", controllers.UploadController{}.UploadFile)
+
 		//获取用户详情
 		apiV1NeedLogin.GET("/user/:id", controllers.UserController{}.GetUserByID)
-
+		//修改用户资料
 		apiV1NeedLogin.POST("/user/edit", controllers.UserController{}.EditUserProfile)
+		//修改用户密码
+		apiV1NeedLogin.POST("/user/edit/password", controllers.UserController{}.EditUserPassword)
+
 		//获取工具列表
 		apiV1NeedLogin.GET("/tools_list", controllers.ToolsController{}.GetToolsList)
 		//分类列表

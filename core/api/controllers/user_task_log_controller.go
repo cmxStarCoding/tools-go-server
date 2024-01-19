@@ -12,7 +12,7 @@ type UserTaskLogController struct {
 
 func (c UserTaskLogController) GetUserTaskLogList(ctx *gin.Context) {
 
-	request, requestErr := user.ValidateGetUserTaskLogListRequest(ctx)
+	request, requestErr := user.ValidateGetTaskLogListRequest(ctx)
 	if requestErr != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": requestErr.Error()})
 		return

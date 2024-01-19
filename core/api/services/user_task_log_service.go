@@ -12,7 +12,7 @@ import (
 
 type UserTaskLogService struct{}
 
-func (s UserTaskLogService) GetUserTaskLogList(requestData *user.GetUserTaskLogListRequest, UserId uint) ([]models.UserTaskLogModel, error) {
+func (s UserTaskLogService) GetUserTaskLogList(requestData *user.GetTaskLogListRequest, UserId uint) ([]models.UserTaskLogModel, error) {
 
 	var mapList []models.UserTaskLogModel
 
