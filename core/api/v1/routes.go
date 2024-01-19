@@ -21,6 +21,8 @@ func SetupRoutes(r *gin.Engine) {
 	{
 		//获取用户详情
 		apiV1NeedLogin.GET("/user/:id", controllers.UserController{}.GetUserByID)
+
+		apiV1NeedLogin.POST("/user/edit", controllers.UserController{}.EditUserProfile)
 		//获取工具列表
 		apiV1NeedLogin.GET("/tools_list", controllers.ToolsController{}.GetToolsList)
 		//分类列表

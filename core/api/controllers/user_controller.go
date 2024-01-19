@@ -64,3 +64,18 @@ func (c UserController) GetUserByID(ctx *gin.Context) {
 	// 返回JSON数据
 	ctx.JSON(200, userInfo)
 }
+
+func (c UserController) EditUserProfile(ctx *gin.Context) {
+	request, err := user.ValidEditRequest(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	userId := ctx.Value("UserId").(uint)
+	result, resultErr := services.UserService{}.EditUserProfile(request, userId)
+	if resultErr != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": resultErr.Error()})
+		return
+	}
+	ctx.JSON(http.StatusOK, result)
+}

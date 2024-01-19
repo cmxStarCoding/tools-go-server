@@ -44,3 +44,14 @@ func StringNumericToUnit(stringNumeric string) uint {
 	id64, _ := strconv.ParseUint(stringNumeric, 10, 64)
 	return uint(id64)
 }
+
+func ContainValue(slice []uint64, value uint64) bool {
+
+	for _, v := range slice {
+
+		if v == value {
+			return true
+		}
+	}
+	return false
+}
