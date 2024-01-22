@@ -8,6 +8,7 @@ import (
 type UserFullModel struct {
 	ID            uint           `gorm:"column:id" json:"id"`
 	Phone         string         `gorm:"column:phone" json:"phone"`
+	Account       string         `gorm:"column:account" json:"account"`
 	Password      string         `gorm:"password" json:"password" `
 	Nickname      string         `gorm:"column:nickname" json:"nickname"`
 	AvatarUrl     string         `gorm:"column:avatar_url" json:"avatar_url"`

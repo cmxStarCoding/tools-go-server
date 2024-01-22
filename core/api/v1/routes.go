@@ -16,6 +16,11 @@ func SetupRoutes(r *gin.Engine) {
 		apiV1NoNeedLogin.POST("/pic_paste_notify", controllers.PicPasteController{}.Notify)
 		//用户登录
 		apiV1NoNeedLogin.POST("/user/login", controllers.UserController{}.UserLogin)
+
+		//发送邮箱验证码
+		apiV1NoNeedLogin.GET("/send_email_code", controllers.UserController{}.SendEmailCode)
+		//忘记密码重置
+		apiV1NoNeedLogin.POST("/forget_password_reset", controllers.UserController{}.ForgetPasswordReset)
 	}
 	apiV1NeedLogin := r.Group("/api/v1").Use(middleware.TranslationsMiddleware(), middleware.JWTMiddleware())
 	{

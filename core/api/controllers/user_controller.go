@@ -5,6 +5,7 @@ package controllers
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"log"
 	"net/http"
 	"time"
 	"tools/core/api/services"
@@ -85,16 +86,47 @@ func (c UserController) EditUserProfile(ctx *gin.Context) {
 }
 
 func (c UserController) EditUserPassword(ctx *gin.Context) {
-	request,err := user.ValidEditPasswordRequest(ctx)
+	request, err := user.ValidEditPasswordRequest(ctx)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error":err.Error()})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 	userId := ctx.Value("UserId").(uint)
-	editResult,editResultErr := services.UserService{}.EditPassword(request,userId)
+	editResult, editResultErr := services.UserService{}.EditPassword(request, userId)
 	if editResultErr != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": editResultErr.Error()})
 		return
 	}
 	ctx.JSON(http.StatusOK, editResult)
+}
+
+func (c UserController) SendEmailCode(ctx *gin.Context) {
+	request, err := user.ValidSendEmailCodeRequest(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	log.Println("进来了")
+	editResult, editResultErr := services.UserService{}.SendEmailCode(request)
+	if editResultErr != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": editResultErr.Error()})
+		return
+	}
+	ctx.JSON(http.StatusOK, editResult)
+
+}
+
+func (c UserController) ForgetPasswordReset(ctx *gin.Context) {
+	request, err := user.ValidForgetPasswordResetRequest(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	editResult, editResultErr := services.UserService{}.ForgetPasswordReset(request)
+	if editResultErr != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": editResultErr.Error()})
+		return
+	}
+	ctx.JSON(http.StatusOK, editResult)
+
 }
