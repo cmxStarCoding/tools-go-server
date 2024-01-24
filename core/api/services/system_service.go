@@ -47,7 +47,6 @@ func (s SystemService) CheckSystemUpdate(requestData *system.CheckSystemUpdateRe
 
 	// 比较版本号
 	if version1.LessThan(version2) {
-		fmt.Println("Version 1 is less than Version 2")
 		returnMap["is_exist_version"] = 1
 		returnMap["version"] = systemUpdate
 	}

@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"tools/common/database"
+	"tools/common/middleware"
 	"tools/common/utils"
 	"tools/core/api/v1"
 )
@@ -12,6 +13,8 @@ func main() {
 	r := gin.Default()
 	// 为 multipart forms 设置较低的内存限制 (默认是 32 MiB)
 	r.MaxMultipartMemory = 2 << 20 // 8 MiB
+
+	r.Use(middleware.CORSMiddleware())
 	//初始化日志文件
 	utils.SetupLogger()
 	// 初始化数据库连接
