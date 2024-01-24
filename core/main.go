@@ -19,7 +19,7 @@ func main() {
 	// 设置API路由
 	v1.SetupRoutes(r)
 	//静态资源配置
-	//r.Static("/static", "../static")
+	r.Static("/static", "../static")
 	// 启动服务
-	r.Run(":8080")
+	r.Run(":8083")
 }

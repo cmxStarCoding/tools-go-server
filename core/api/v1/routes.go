@@ -21,6 +21,8 @@ func SetupRoutes(r *gin.Engine) {
 		apiV1NoNeedLogin.GET("/send_email_code", controllers.UserController{}.SendEmailCode)
 		//忘记密码重置
 		apiV1NoNeedLogin.POST("/forget_password_reset", controllers.UserController{}.ForgetPasswordReset)
+		//检测更新
+		apiV1NoNeedLogin.POST("/check_system_update", controllers.SystemController{}.CheckSystemUpdate)
 	}
 	apiV1NeedLogin := r.Group("/api/v1").Use(middleware.TranslationsMiddleware(), middleware.JWTMiddleware())
 	{
