@@ -3,12 +3,14 @@ package services
 import (
 	"errors"
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 	"log"
 	"math/rand"
 	"net/smtp"
 	"strconv"
 	"time"
+	"tools/common/cache"
 	"tools/common/database"
 	"tools/common/utils"
 	"tools/core/api/models"
@@ -25,7 +27,7 @@ var (
 type UserService struct{}
 
 // GetUserByID 根据用户ID获取用户信息
-func (s UserService) GetUserByID(userID string) *models.UserModel {
+func (s UserService) GetUserByID(userID uint) *models.UserModel {
 	// 获取数据库连接
 	db := database.DB
 	// 调用模型方法从数据库中获取用户
@@ -33,6 +35,16 @@ func (s UserService) GetUserByID(userID string) *models.UserModel {
 	//db.Where("user_id = ?", userID).First(userInfo)
 	db.First(&userInfo, userID)
 	return userInfo
+}
+
+// UserLogout 根据用户ID获取用户信息
+func (s UserService) UserLogout(ctx *gin.Context) (string, error) {
+	token := ctx.Value("UserToken").(string)
+	//拉黑token
+	key := "tools_token_black_list" + utils.Md5Hash(token)
+	result := cache.RedisClient.Set(key, 1, 86400*7*time.Second)
+	fmt.Println("缓存结果是", result.String())
+	return "ok", nil
 }
 
 func (s UserService) UserLogin(account string, password string) (*models.UserModel, error) {
@@ -46,24 +58,27 @@ func (s UserService) UserLogin(account string, password string) (*models.UserMod
 	return userInfo, nil
 }
 
-func (s UserService) UserRegister(requestData *user.RegisterRequest) (string, error) {
+func (s UserService) UserRegister(requestData *user.RegisterRequest) (*models.UserModel, error) {
 	// 获取数据库连接
 	db := database.DB
-	userInfo := &models.UserFullModel{}
-	err := db.Where("account = ?", requestData.Account).First(userInfo).Error
+	userFullInfo := &models.UserFullModel{}
+	err := db.Where("account = ?", requestData.Account).First(userFullInfo).Error
 
 	if err == nil {
-		return "", fmt.Errorf("该账号已被注册")
+		return nil, fmt.Errorf("该账号已被注册")
 	}
-	userInfo.Account = requestData.Account
-	userInfo.Password = utils.Md5Hash(requestData.Password)
-	userInfo.Nickname = requestData.Account
+	userFullInfo.Account = requestData.Account
+	userFullInfo.Password = utils.Md5Hash(requestData.Password)
+	userFullInfo.Nickname = requestData.Account
+	userFullInfo.AvatarUrl = "/static/avatar1.png"
 
-	err = database.DB.Create(userInfo).Error
+	err = database.DB.Create(userFullInfo).Error
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	return "ok", nil
+	userInfo := &models.UserModel{}
+	db.Where("account = ?", requestData.Account).First(userInfo)
+	return userInfo, nil
 }
 
 func (s UserService) EditUserProfile(requestData *user.EditProfileRequest, userId uint) (*models.UserModel, error) {

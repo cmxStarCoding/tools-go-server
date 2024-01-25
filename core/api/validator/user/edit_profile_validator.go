@@ -15,7 +15,7 @@ type EditProfileRequest struct {
 	//Username string `json:"username" binding:"required,min=4,max=20"`
 	//Phone   string  `json:"phone" form:"phone" validate:"required,email"`
 	Type      uint   `json:"type" form:"type" validate:"required,checkTypeRange" comment:"类型"`
-	Nickname  string `json:"nickname" form:"nickname" validate:"checkNickname" comment:"昵称"`
+	Nickname  string `json:"nickname" form:"nickname" validate:"checkNickname,min=6,max=10" comment:"昵称"`
 	AvatarUrl string `json:"avatar_url" form:"avatar_url" validate:"checkAvatarUrl" comment:"头像"`
 }
 

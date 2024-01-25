@@ -32,7 +32,10 @@ func SetupRoutes(r *gin.Engine) {
 		apiV1NeedLogin.POST("/upload", controllers.UploadController{}.UploadFile)
 
 		//获取用户详情
-		apiV1NeedLogin.GET("/user/:id", controllers.UserController{}.GetUserByID)
+		apiV1NeedLogin.GET("/user", controllers.UserController{}.GetUserByID)
+		//apiV1NeedLogin.GET("/user/:id", controllers.UserController{}.GetUserByID)
+		//用户退出登录
+		apiV1NeedLogin.POST("/user/logout", controllers.UserController{}.UserLogout)
 		//修改用户资料
 		apiV1NeedLogin.POST("/user/edit", controllers.UserController{}.EditUserProfile)
 		//修改用户密码

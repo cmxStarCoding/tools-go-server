@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"tools/common/cache"
 	"tools/common/database"
 	"tools/common/middleware"
 	"tools/common/utils"
@@ -19,6 +20,8 @@ func main() {
 	utils.SetupLogger()
 	// 初始化数据库连接
 	database.InitDB()
+	// 初始化redis链接
+	cache.InitClient()
 	// 设置API路由
 	v1.SetupRoutes(r)
 	//静态资源配置

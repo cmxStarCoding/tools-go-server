@@ -25,25 +25,25 @@ func InitDB() {
 	password := viper.GetString("db.password")
 	port := viper.GetString("db.port")
 
-	dsn := username+":"+password+"@tcp("+host+":"+port+")/"+database+"?charset=utf8mb4&parseTime=True&loc=Local"
-	var err error
-	DB, err = gorm.Open(mysql.New(mysql.Config{
-		DSN: dsn,
+	dsn := username + ":" + password + "@tcp(" + host + ":" + port + ")/" + database + "?charset=utf8mb4&parseTime=True&loc=Local"
+	var connectorErr error
+	DB, connectorErr = gorm.Open(mysql.New(mysql.Config{
+		DSN:                     dsn,
 		DontSupportRenameColumn: true,
 	}), &gorm.Config{
 		NamingStrategy: schema.NamingStrategy{
-			TablePrefix: "t_",
+			TablePrefix:   "t_",
 			SingularTable: true,
 		},
 	})
-	if err != nil {
-		log.Fatalf("Failed to connect to database: %s", fmt.Sprintf("%v", err))
+	if connectorErr != nil {
+		log.Fatalf("Failed to connect to database: %s", fmt.Sprintf("%v", connectorErr))
 	}
 
 	// 设置连接池配置（可选）
 	sqlDB, err := DB.DB()
 	if err != nil {
-		log.Fatalf("Failed to get database connection: ", fmt.Sprintf("%v", err.Error()))
+		log.Fatalf("Failed to get database connection: ", fmt.Sprintf("%v", connectorErr.Error()))
 	}
 
 	// 设置连接池大小等配置（根据实际情况进行调整）

@@ -3,7 +3,6 @@
 package controllers
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -32,7 +31,6 @@ func (c UserController) UserLogin(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": userErr.Error()})
 		return
 	}
-	fmt.Println(UserInfo.ID, UserInfo.Nickname)
 	jwtToken, err := utils.GenerateToken(UserInfo.ID, UserInfo.Nickname)
 
 	// 返回JSON数据
@@ -51,22 +49,38 @@ func (c UserController) UserRegister(ctx *gin.Context) {
 		return
 	}
 	// 调用用户服务获取用户信息
-	registerResult, resultErr := services.UserService{}.UserRegister(request)
+	UserInfo, resultErr := services.UserService{}.UserRegister(request)
 	if resultErr != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": resultErr.Error()})
 		return
 	}
-	ctx.JSON(http.StatusOK, registerResult)
+	jwtToken, err := utils.GenerateToken(UserInfo.ID, UserInfo.Nickname)
+	ctx.JSON(http.StatusOK, gin.H{
+		"jtw_token": jwtToken,
+		"expire":    time.Now().Add(7 * 24 * time.Hour),
+		"user_info": UserInfo,
+	})
+}
+
+func (c UserController) UserLogout(ctx *gin.Context) {
+	// 调用用户服务获取用户信息
+	result, err := services.UserService{}.UserLogout(ctx)
+
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	// 返回JSON数据
+	ctx.JSON(200, result)
 }
 
 // GetUserByID 根据用户ID获取用户信息
 func (c UserController) GetUserByID(ctx *gin.Context) {
 	// 从请求参数中获取用户ID
-	userID := ctx.Param("id")
 
-	//fmt.Println(ctx.Get("UserID"))
+	//fmt.Println()
 	//fmt.Println(ctx.Get("Nickname"))
-
+	userID := ctx.Value("UserId").(uint)
 	// 调用用户服务获取用户信息
 	userInfo := services.UserService{}.GetUserByID(userID)
 
