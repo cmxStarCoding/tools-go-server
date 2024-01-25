@@ -13,7 +13,7 @@ import (
 type LoginRequest struct {
 	//Username string `json:"username" binding:"required,min=4,max=20"`
 	//Phone   string  `json:"phone" form:"phone" validate:"required,email"`
-	Phone    string `json:"phone" form:"phone" validate:"required" comment:"手机号"`
+	Account  string `json:"account" form:"account" validate:"required" comment:"账号"`
 	Password string `json:"password" form:"password" validate:"required,min=6" comment:"密码"`
 }
 

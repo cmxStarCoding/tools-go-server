@@ -18,6 +18,7 @@ import (
 var (
 	ErrUserNotFound           = errors.New("未找到用户")
 	EmailVerifyRecordNotFound = errors.New("邮箱验证记录未找到")
+	AccountOrPasswordValid    = errors.New("账号或密码不正确")
 )
 
 // UserService 用户服务
@@ -34,37 +35,35 @@ func (s UserService) GetUserByID(userID string) *models.UserModel {
 	return userInfo
 }
 
-func (s UserService) UserLogin(phone string, password string) (*models.UserModel, error) {
+func (s UserService) UserLogin(account string, password string) (*models.UserModel, error) {
 	// 获取数据库连接
 	db := database.DB
 	userInfo := &models.UserModel{}
-	result := db.Where("phone = ?", phone).Where("password = ?", utils.Md5Hash(password)).First(userInfo)
+	result := db.Where("account = ?", account).Where("password = ?", utils.Md5Hash(password)).First(userInfo)
 	if result.Error != nil && errors.Is(result.Error, gorm.ErrRecordNotFound) {
-		return nil, ErrUserNotFound
+		return nil, AccountOrPasswordValid
 	}
 	return userInfo, nil
 }
 
-func (s UserService) UserRegister(requestData *user.RegisterRequest) (*models.UserModel, error) {
+func (s UserService) UserRegister(requestData *user.RegisterRequest) (string, error) {
 	// 获取数据库连接
 	db := database.DB
 	userInfo := &models.UserFullModel{}
 	err := db.Where("account = ?", requestData.Account).First(userInfo).Error
 
 	if err == nil {
-		return nil, fmt.Errorf("该账号已被注册")
+		return "", fmt.Errorf("该账号已被注册")
 	}
+	userInfo.Account = requestData.Account
+	userInfo.Password = utils.Md5Hash(requestData.Password)
+	userInfo.Nickname = requestData.Account
 
-	var createResult = &models.UserModel{
-		Account:  requestData.Account,
-		Password: utils.Md5Hash(requestData.Password),
-	}
-
-	err = database.DB.Create(createResult).Error
+	err = database.DB.Create(userInfo).Error
 	if err != nil {
-		return nil, err
+		return "", err
 	}
-	return createResult, nil
+	return "ok", nil
 }
 
 func (s UserService) EditUserProfile(requestData *user.EditProfileRequest, userId uint) (*models.UserModel, error) {
