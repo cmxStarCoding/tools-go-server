@@ -28,54 +28,76 @@ func (s UserService) GetUserByID(userID string) *models.UserModel {
 	// 获取数据库连接
 	db := database.DB
 	// 调用模型方法从数据库中获取用户
-	user := &models.UserModel{}
-	//db.Where("user_id = ?", userID).First(user)
-	db.First(&user, userID)
-	return user
+	userInfo := &models.UserModel{}
+	//db.Where("user_id = ?", userID).First(userInfo)
+	db.First(&userInfo, userID)
+	return userInfo
 }
 
 func (s UserService) UserLogin(phone string, password string) (*models.UserModel, error) {
 	// 获取数据库连接
 	db := database.DB
-	user := &models.UserModel{}
-	result := db.Where("phone = ?", phone).Where("password = ?", utils.Md5Hash(password)).First(user)
+	userInfo := &models.UserModel{}
+	result := db.Where("phone = ?", phone).Where("password = ?", utils.Md5Hash(password)).First(userInfo)
 	if result.Error != nil && errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		return nil, ErrUserNotFound
 	}
-	return user, nil
+	return userInfo, nil
+}
+
+func (s UserService) UserRegister(requestData *user.RegisterRequest) (*models.UserModel, error) {
+	// 获取数据库连接
+	db := database.DB
+	userInfo := &models.UserFullModel{}
+	err := db.Where("account = ?", requestData.Account).First(userInfo).Error
+
+	if err == nil {
+		return nil, fmt.Errorf("该账号已被注册")
+	}
+
+	var createResult = &models.UserModel{
+		Account:  requestData.Account,
+		Password: utils.Md5Hash(requestData.Password),
+	}
+
+	err = database.DB.Create(createResult).Error
+	if err != nil {
+		return nil, err
+	}
+	return createResult, nil
 }
 
 func (s UserService) EditUserProfile(requestData *user.EditProfileRequest, userId uint) (*models.UserModel, error) {
 
-	user := &models.UserModel{}
+	userInfo := &models.UserModel{}
 
-	result := database.DB.Where("id = ?", userId).First(user)
+	result := database.DB.Where("id = ?", userId).First(userInfo)
 
 	if result.Error != nil && errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		return nil, ErrUserNotFound
 	}
 	//修改昵称
 	if requestData.Type == 1 {
-		user.Nickname = requestData.Nickname
-		database.DB.Save(user)
+		userInfo.Nickname = requestData.Nickname
+		database.DB.Save(userInfo)
 	}
 	if requestData.Type == 2 {
-		user.AvatarUrl = requestData.AvatarUrl
-		database.DB.Save(user)
+		userInfo.AvatarUrl = requestData.AvatarUrl
+		database.DB.Save(userInfo)
 	}
-	return user, nil
+	return userInfo, nil
 }
 
 func (s UserService) EditPassword(requestData *user.EditPasswordRequest, UserId uint) (string, error) {
 
-	user := &models.UserFullModel{}
-	result := database.DB.Where("id = ?", UserId).Select("ID", "Password").First(user)
+	userInfo := &models.UserFullModel{}
+	result := database.DB.Where("id = ?", UserId).Select("ID", "Password").First(userInfo)
 	if result.Error != nil && errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		return "ok", ErrUserNotFound
 	}
 	oldPasswordEncrypt := utils.Md5Hash(requestData.OldPassword)
-	log.Println("密码是", user.Password)
-	if oldPasswordEncrypt != user.Password {
+	log.Println("密码是", userInfo.Password)
+	if oldPasswordEncrypt != userInfo.Password {
 		return "ok", fmt.Errorf("老密码输入错误")
 	}
 
@@ -87,8 +109,8 @@ func (s UserService) EditPassword(requestData *user.EditPasswordRequest, UserId 
 		return "ok", fmt.Errorf("新密码和老密码不能一致")
 	}
 
-	user.Password = requestData.NewPassword
-	database.DB.Save(user)
+	userInfo.Password = requestData.NewPassword
+	database.DB.Save(userInfo)
 	return "ok", nil
 }
 

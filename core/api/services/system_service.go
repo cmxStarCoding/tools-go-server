@@ -43,12 +43,12 @@ func (s SystemService) CheckSystemUpdate(requestData *system.CheckSystemUpdateRe
 	version2, _ := semver.NewVersion(systemUpdate.Version)
 
 	returnMap := make(map[string]any)
-	returnMap["is_exist_version"] = 0
+	returnMap["is_exist_new_version"] = 0
 
 	// 比较版本号
 	if version1.LessThan(version2) {
-		returnMap["is_exist_version"] = 1
-		returnMap["version"] = systemUpdate
+		returnMap["is_exist_new_version"] = 1
+		returnMap["new_version"] = systemUpdate
 	}
 	return returnMap, nil
 }

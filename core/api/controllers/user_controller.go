@@ -55,6 +55,22 @@ func (c UserController) UserLogin(ctx *gin.Context) {
 	})
 }
 
+func (c UserController) UserRegister(ctx *gin.Context) {
+	// 验证用户请求参数
+	request, err := user.ValidateRegisterRequest(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	// 调用用户服务获取用户信息
+	registerResult, resultErr := services.UserService{}.UserRegister(request)
+	if resultErr != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": resultErr.Error()})
+		return
+	}
+	ctx.JSON(http.StatusOK, registerResult)
+}
+
 // GetUserByID 根据用户ID获取用户信息
 func (c UserController) GetUserByID(ctx *gin.Context) {
 	// 从请求参数中获取用户ID

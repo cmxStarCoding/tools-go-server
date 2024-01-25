@@ -16,6 +16,8 @@ func SetupRoutes(r *gin.Engine) {
 		apiV1NoNeedLogin.POST("/pic_paste_notify", controllers.PicPasteController{}.Notify)
 		//用户登录
 		apiV1NoNeedLogin.POST("/user/login", controllers.UserController{}.UserLogin)
+		//用户注册
+		apiV1NoNeedLogin.POST("/user/register", controllers.UserController{}.UserRegister)
 
 		//发送邮箱验证码
 		apiV1NoNeedLogin.GET("/send_email_code", controllers.UserController{}.SendEmailCode)
