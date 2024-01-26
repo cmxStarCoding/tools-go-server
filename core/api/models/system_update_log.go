@@ -8,6 +8,7 @@ import (
 type SystemUpdateLogModel struct {
 	ID                uint           `gorm:"column:id" json:"id"`
 	Version           string         `gorm:"column:version" json:"version" `
+	VersionName       string         `gorm:"column:version_name" json:"version_name" `
 	Content           string         `gorm:"column:content" json:"content"`
 	MacDownloadUrl    string         `gorm:"column:mac_download_url" json:"mac_download_url"`
 	WindowDownloadUrl string         `gorm:"column:window_download_url" json:"window_download_url"`

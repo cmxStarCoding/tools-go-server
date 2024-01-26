@@ -23,13 +23,20 @@ func (s SystemService) FeedBack(requestData *system.FeedbackRequest, UserId uint
 	return "ok", nil
 }
 
-func (s SystemService) SystemUpdateLog(requestData *system.GetUpdateLogRequest) ([]models.SystemUpdateLogModel, error) {
+func (s SystemService) SystemUpdateLog(requestData *system.GetUpdateLogRequest) (map[string]interface{}, error) {
+
+	var mapResult = make(map[string]interface{})
 
 	var sliceUpdateLog []models.SystemUpdateLogModel
 
+	var total int64
+	database.DB.Model(&models.SystemUpdateLogModel{}).Count(&total)
 	database.DB.Limit(int(requestData.Limit)).Offset((int(requestData.Page) - 1) * int(requestData.Limit)).Find(&sliceUpdateLog)
 
-	return sliceUpdateLog, nil
+	mapResult["total"] = total
+	mapResult["list"] = sliceUpdateLog
+
+	return mapResult, nil
 }
 
 func (s SystemService) CheckSystemUpdate(requestData *system.CheckSystemUpdateRequest) (map[string]any, error) {

@@ -7,7 +7,6 @@ import (
 
 // CategoryModel UserModel 用户模型
 type CategoryModel struct {
-	gorm.Model
 	ID          uint           `gorm:"column:id" json:"id"`
 	Name        string         `gorm:"column:name" json:"name"`
 	Description string         `gorm:"column:description" json:"description" `
