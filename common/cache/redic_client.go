@@ -8,11 +8,16 @@ import (
 
 var RedisClient *redis.Client
 
-func InitClient() {
+func InitClient(projectConfig map[string]string) {
+
+	host := projectConfig["redis_host"]
+	port := projectConfig["redis_port"]
+	password := projectConfig["redis_password"]
+
 	// 连接到 Redis 服务器
 	RedisClient = redis.NewClient(&redis.Options{
-		Addr:         "localhost:6379",  // Redis 服务器地址
-		Password:     "",                // Redis 服务器密码
+		Addr:         host + ":" + port, // Redis 服务器地址
+		Password:     password,          // Redis 服务器密码
 		DB:           0,                 // 默认数据库
 		PoolSize:     10,                // 连接池大小
 		MinIdleConns: 5,                 // 最小空闲连接数
