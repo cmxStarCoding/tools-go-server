@@ -11,7 +11,6 @@ const (
 )
 
 type ToolsModel struct {
-	gorm.Model
 	ID          uint           `gorm:"column:id" json:"id"`
 	Mark        string         `gorm:"column:mark" json:"mark"`
 	Name        string         `gorm:"column:name" json:"name"`

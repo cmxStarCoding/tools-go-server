@@ -12,17 +12,40 @@ import (
 
 type UserTaskLogService struct{}
 
-func (s UserTaskLogService) GetUserTaskLogList(requestData *user.GetTaskLogListRequest, UserId uint) ([]models.UserTaskLogModel, error) {
+func (s UserTaskLogService) GetUserTaskLogList(requestData *user.GetTaskLogListRequest, UserId uint) (map[string]interface{}, error) {
 
-	var mapList []models.UserTaskLogModel
+	type ExtendedUserTaskLog struct {
+		models.UserTaskLogModel
+		StatusText string `gorm:"-" json:"status_text"`
+	}
 
-	query := database.DB.Where("user_id = ?", UserId).Limit(int(requestData.Limit)).Offset((int(requestData.Page) - 1) * int(requestData.Limit))
-
-	if requestData.Status >= 0 {
+	var mapList []ExtendedUserTaskLog
+	query := database.DB.Where("user_id = ?", UserId)
+	if requestData.Status > 0 {
 		query.Where("status = ?", requestData.Status)
 	}
-	query.Preload("Tools").Preload("User").Find(&mapList)
-	return mapList, nil
+	var total int64
+	query.Model(&models.UserTaskLogModel{}).Count(&total)
+	query.Limit(int(requestData.Limit)).Offset((int(requestData.Page) - 1) * int(requestData.Limit)).Preload("Tools").Preload("User").Find(&mapList)
+
+	var result = make(map[string]interface{})
+	result["total"] = total
+	result["list"] = mapList
+
+	if len(mapList) > 0 {
+		for i := range mapList {
+			if mapList[i].Status == 1 {
+				mapList[i].StatusText = "等待中"
+			} else if mapList[i].Status == 2 {
+				mapList[i].StatusText = "执行中"
+			} else if mapList[i].Status == 3 {
+				mapList[i].StatusText = "执行成功"
+			} else if mapList[i].Status == 4 {
+				mapList[i].StatusText = "执行失败"
+			}
+		}
+	}
+	return result, nil
 }
 
 func (s UserTaskLogService) CreateTask(request *pic.Request, toolsMark string, UserId uint) (map[string]any, error) {

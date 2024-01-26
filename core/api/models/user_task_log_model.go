@@ -3,7 +3,6 @@ package models
 import (
 	"encoding/json"
 	"gorm.io/gorm"
-	"time"
 )
 
 type UserTaskJSON json.RawMessage
@@ -30,7 +29,6 @@ type UserTaskJSON json.RawMessage
 //}
 
 type UserTaskLogModel struct {
-	gorm.Model
 	ID            uint           `gorm:"column:id" json:"id"`
 	ToolId        uint           `gorm:"column:tool_id" json:"tool_id"`
 	UserId        uint           `gorm:"column:user_id" json:"user_id"`
@@ -40,8 +38,8 @@ type UserTaskLogModel struct {
 	RequestResult string         `gorm:"column:request_result" json:"request_result"`
 	UserFailMsg   string         `gorm:"column:user_fail_msg" json:"user_fail_msg"`
 	SystemFailMsg string         `gorm:"column:system_fail_msg" json:"system_fail_msg"`
-	CreatedAt     time.Time      `gorm:"column:created_at" json:"created_at"`
-	UpdatedAt     time.Time      `gorm:"column:updated_at" json:"updated_at"`
+	CreatedAt     TimeNormal     `gorm:"column:created_at" json:"created_at"`
+	UpdatedAt     TimeNormal     `gorm:"column:updated_at" json:"updated_at"`
 	DeletedAt     gorm.DeletedAt `gorm:"column:deleted_at" json:"deleted_at"`
 	User          UserModel      `json:"user"`
 	Tools         ToolsModel     `gorm:"foreignKey:ToolId" json:"tools"`
