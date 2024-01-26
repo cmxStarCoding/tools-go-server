@@ -10,6 +10,7 @@ type SystemUpdateLogModel struct {
 	Version           string         `gorm:"column:version" json:"version" `
 	VersionName       string         `gorm:"column:version_name" json:"version_name" `
 	Content           string         `gorm:"column:content" json:"content"`
+	IntervalPeriod    uint           `gorm:"column:interval_period" json:"interval_period"`
 	MacDownloadUrl    string         `gorm:"column:mac_download_url" json:"mac_download_url"`
 	WindowDownloadUrl string         `gorm:"column:window_download_url" json:"window_download_url"`
 	CreatedAt         TimeNormal     `gorm:"column:created_at" json:"created_at"`
