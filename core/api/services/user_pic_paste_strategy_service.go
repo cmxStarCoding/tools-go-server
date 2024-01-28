@@ -12,14 +12,45 @@ import (
 type UserPicPasteStrategyService struct {
 }
 
-func (s UserPicPasteStrategyService) GetUserPicPasteStrategyList(requestData *pic.GetUserPicPasteStrategyListRequest, UserId uint) ([]models.UserPicPasteStrategyModel, error) {
+func (s UserPicPasteStrategyService) GetUserPicPasteStrategyList(requestData *pic.GetUserPicPasteStrategyListRequest, UserId uint) (map[string]interface{}, error) {
+	var total int64
+	database.DB.Model(&models.UserPicPasteStrategyModel{}).Count(&total)
 
-	var slice []models.UserPicPasteStrategyModel
-	resultErr := database.DB.Where("user_id = ?", UserId).Preload("User").Limit(int(requestData.Limit)).Offset((int(requestData.Page) - 1) * int(requestData.Limit)).Find(&slice)
+	type ReturnResult struct {
+		models.UserPicPasteStrategyModel
+		ShapeText string `gorm:"-" json:"shape_text"`
+		TypeText  string `gorm:"-" json:"type_text"`
+	}
+	var list []ReturnResult
+	resultErr := database.DB.Where("user_id = ?", UserId).Preload("User").Limit(int(requestData.Limit)).Offset((int(requestData.Page) - 1) * int(requestData.Limit)).Find(&list)
 	if resultErr.Error != nil {
 		return nil, resultErr.Error
 	}
-	return slice, nil
+	var marResult = make(map[string]interface{})
+	marResult["total"] = total
+
+	if len(list) > 0 {
+		for i := range list {
+			if list[i].BcShape == 1 {
+				list[i].ShapeText = "圆形"
+			} else if list[i].BcShape == 2 {
+				list[i].ShapeText = "方形"
+			} else {
+				list[i].ShapeText = "无背景区域"
+			}
+			multiple := fmt.Sprintf("%.2f", list[i].Multiple)
+			if list[i].Type == 1 {
+				list[i].TypeText = "放大" + multiple + "倍"
+			} else if list[i].Type == 2 {
+				list[i].TypeText = "缩小" + multiple + "倍"
+			} else {
+				list[i].TypeText = "无缩放"
+			}
+
+		}
+	}
+	marResult["list"] = list
+	return marResult, nil
 }
 
 func (s UserPicPasteStrategyService) editUserPicPasteStrategyService(requestData *pic.SaveUserPicPasteStrategyRequest, UserId uint) (models.UserPicPasteStrategyModel, error) {
@@ -28,6 +59,7 @@ func (s UserPicPasteStrategyService) editUserPicPasteStrategyService(requestData
 	if resultErr != nil && errors.Is(resultErr.Error, gorm.ErrRecordNotFound) {
 		return models.UserPicPasteStrategyModel{}, fmt.Errorf("记录数据不存在")
 	}
+	userPicPasteStrategy.Name = requestData.Name
 	userPicPasteStrategy.OriginalImageUrl = requestData.OriginalImageUrl
 	userPicPasteStrategy.StickImgUrl = requestData.StickImgUrl
 	userPicPasteStrategy.X = requestData.X
@@ -35,7 +67,9 @@ func (s UserPicPasteStrategyService) editUserPicPasteStrategyService(requestData
 	userPicPasteStrategy.R = requestData.R
 	userPicPasteStrategy.Type = requestData.Type
 	userPicPasteStrategy.Multiple = requestData.Multiple
-	userPicPasteStrategy.IsSquare = requestData.IsSquare
+	userPicPasteStrategy.BcShape = requestData.BcShape
+	userPicPasteStrategy.BcColor = requestData.BcColor
+
 	userPicPasteStrategy.SideLength = requestData.SideLength
 	database.DB.Save(&userPicPasteStrategy)
 	return *userPicPasteStrategy, nil
@@ -44,6 +78,7 @@ func (s UserPicPasteStrategyService) editUserPicPasteStrategyService(requestData
 func (s UserPicPasteStrategyService) createUserPicPasteStrategyService(requestData *pic.SaveUserPicPasteStrategyRequest, UserId uint) (models.UserPicPasteStrategyModel, error) {
 	userPicPasteStrategy := models.UserPicPasteStrategyModel{
 		UserId:           UserId,
+		Name:             requestData.Name,
 		OriginalImageUrl: requestData.OriginalImageUrl,
 		StickImgUrl:      requestData.StickImgUrl,
 		X:                requestData.X,
@@ -51,7 +86,8 @@ func (s UserPicPasteStrategyService) createUserPicPasteStrategyService(requestDa
 		R:                requestData.R,
 		Type:             requestData.Type,
 		Multiple:         requestData.Multiple,
-		IsSquare:         requestData.IsSquare,
+		BcShape:          requestData.BcShape,
+		BcColor:          requestData.BcColor,
 		SideLength:       requestData.SideLength,
 	}
 	result := database.DB.Create(&userPicPasteStrategy)

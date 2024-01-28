@@ -79,6 +79,8 @@ func (s PicPasteService) DoTask(request *pic.Request, TaskId any) {
 func (s PicPasteService) Debug(request *pic.DebugRequest, UserId uint) (map[string]any, error) {
 	// 将结构体转换为 JSON
 	requestJson, _ := json.Marshal(request)
+
+	fmt.Println("打印请求参数")
 	// 准备 HTTP 请求
 	url := "http://127.0.0.1:8003/qrcode-replace/debug"
 	resultMap := make(map[string]any)
