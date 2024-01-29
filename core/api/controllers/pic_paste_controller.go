@@ -18,15 +18,16 @@ func (c PicPasteController) PicPaste(ctx *gin.Context) {
 		return
 	}
 	userId, _ := ctx.Value("UserId").(uint)
+
 	//创建任务
-	userTaskLog, err := services.UserTaskLogService{}.CreateTask(request, models.PicPasteMark, userId)
+	userPicStrategy, taskIdString, err := services.UserTaskLogService{}.CreateTask(request.StrategyId, models.PicPasteMark, userId)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	go services.PicPasteService{}.DoTask(request, userTaskLog["task_id"])
+	services.PicPasteService{}.DoTask(userPicStrategy, taskIdString, request.CompressFileUrl)
 	// 返回JSON数据
-	ctx.JSON(200, userTaskLog)
+	ctx.JSON(200, userPicStrategy)
 }
 
 // Notify 图片贴图python服务回调

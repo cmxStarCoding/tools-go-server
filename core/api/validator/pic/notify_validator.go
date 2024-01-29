@@ -11,8 +11,9 @@ import (
 )
 
 type NotifyRequest struct {
-	BatchNo string `json:"batch_no" form:"batch_no" validate:"required" comment:"批次号"`
-	Status  uint   `json:"status" form:"status" validate:"required" comment:"状态"`
+	BatchNo  string `json:"batch_no" form:"batch_no" validate:"required" comment:"批次号"`
+	Status   uint   `json:"status" form:"status" validate:"required" comment:"状态"`
+	FilePath string `json:"file_path" form:"file_path" validate:"" comment:"完成任务后的压缩包地址"`
 }
 
 func ValidateNotifyRequest(c *gin.Context) (*NotifyRequest, error) {

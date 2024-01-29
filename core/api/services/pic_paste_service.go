@@ -7,33 +7,46 @@ import (
 	"github.com/gin-gonic/gin"
 	"io"
 	"net/http"
+	"tools/common/config"
+	"tools/common/database"
+	"tools/core/api/models"
 	"tools/core/api/validator/pic"
 )
 
 type PicPasteService struct {
 }
 
-func (s PicPasteService) DoTask(request *pic.Request, TaskId any) {
+func (s PicPasteService) DoTask(userPicStrategy *models.UserPicPasteStrategyModel, TaskId any, compressFileUrl string) {
+
+	//修改对应状态为执行中
+	userTaskLog := &models.UserTaskLogModel{}
+	database.DB.Where("task_id = ?", TaskId).First(userTaskLog)
+	userTaskLog.Status = 2
+	database.DB.Save(userTaskLog)
 
 	var requestMap = make(map[string]any)
-
-	// 将结构体转换为 JSON
-	jsonData, err := json.Marshal(request)
-	//将json结构赋予map
+	//
+	//// 将结构体转换为 JSON
+	jsonData, err := json.Marshal(userPicStrategy)
+	////将json结构赋予map
 	mapErr := json.Unmarshal(jsonData, &requestMap)
 	if mapErr != nil {
 		gin.DefaultWriter.Write([]byte(fmt.Sprintf("转化map错误，错误原因%s", mapErr.Error())))
 	}
+
+	projectConfig := config.Config
 	requestMap["batch_no"] = TaskId
-	requestMap["notify_url"] = "http://127.0.0.1:8080/api/v1/pic_paste_notify"
+	requestMap["notify_url"] = projectConfig["app_domain"] + "/api/v1/pic_paste_notify"
+	requestMap["compress_file_url"] = compressFileUrl
 
 	//将字典转化为json
-	requestJson, _ := json.Marshal(requestMap)
+	requestJson, err := json.Marshal(requestMap)
 
 	if err != nil {
 		fmt.Println("Error marshaling JSON:", err)
 		return
 	}
+	fmt.Println(string(requestJson))
 
 	// 准备 HTTP 请求
 	url := "http://127.0.0.1:8003/qrcode-replace/replace"
