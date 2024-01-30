@@ -102,8 +102,16 @@ func (s UserPicPasteStrategyService) SaveUserPicPasteStrategy(requestData *pic.S
 	if requestData.ID > 0 {
 		return s.editUserPicPasteStrategyService(requestData, UserId)
 	}
-	return s.createUserPicPasteStrategyService(requestData, UserId)
 
+	userPicPasteStrategy := &models.UserPicPasteStrategyModel{}
+	resultErr := database.DB.Where("name = ?", requestData.Name).Where("user_id", UserId).First(&userPicPasteStrategy)
+	if resultErr.Error != nil {
+		if errors.Is(resultErr.Error, gorm.ErrRecordNotFound) {
+			return s.createUserPicPasteStrategyService(requestData, UserId)
+		}
+		return models.UserPicPasteStrategyModel{}, fmt.Errorf(resultErr.Error.Error())
+	}
+	return models.UserPicPasteStrategyModel{}, fmt.Errorf("策略名称已存在")
 }
 
 func (s UserPicPasteStrategyService) DeleteUserPicPasteStrategy(id uint, UserId uint) (string, error) {

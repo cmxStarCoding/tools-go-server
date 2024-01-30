@@ -13,7 +13,7 @@ import (
 
 func main() {
 	var env string
-	flag.StringVar(&env, "port", "local", "设置环境")
+	flag.StringVar(&env, "env", "local", "设置环境")
 	// 解析启动的命令行参数
 	flag.Parse()
 	// 初始化Gin
