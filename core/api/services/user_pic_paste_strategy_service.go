@@ -14,7 +14,7 @@ type UserPicPasteStrategyService struct {
 
 func (s UserPicPasteStrategyService) GetUserPicPasteStrategyList(requestData *pic.GetUserPicPasteStrategyListRequest, UserId uint) (map[string]interface{}, error) {
 	var total int64
-	database.DB.Model(&models.UserPicPasteStrategyModel{}).Count(&total)
+	database.DB.Model(&models.UserPicPasteStrategyModel{}).Where("user_id = ?", UserId).Count(&total)
 
 	type ReturnResult struct {
 		models.UserPicPasteStrategyModel

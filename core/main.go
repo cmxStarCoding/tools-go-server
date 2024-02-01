@@ -18,6 +18,10 @@ func main() {
 	flag.Parse()
 	// 初始化Gin
 	r := gin.Default()
+
+	if env == "prod" {
+		gin.SetMode(gin.ReleaseMode)
+	}
 	//加载配置文件
 	projectConfig := config.InitConfig(env)
 	// 为 multipart forms 设置较低的内存限制 (默认是 32 MiB)
