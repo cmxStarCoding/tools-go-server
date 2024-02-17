@@ -1,5 +1,6 @@
 .idea
 common/local_config.ini
+common/prod_config.ini
 core/gin.log
 core/core
 go.sum
