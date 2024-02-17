@@ -25,6 +25,8 @@ func SetupRoutes(r *gin.Engine) {
 		apiV1NoNeedLogin.POST("/forget_password_reset", controllers.UserController{}.ForgetPasswordReset)
 		//检测更新
 		apiV1NoNeedLogin.POST("/check_system_update", controllers.SystemController{}.CheckSystemUpdate)
+		//获取当前最新版本
+		apiV1NoNeedLogin.GET("/current_latest_version", controllers.SystemController{}.CurrentLatestVersion)
 		//获取工具列表
 		apiV1NoNeedLogin.GET("/tools_list", controllers.ToolsController{}.GetToolsList)
 		//获取分类工具列表

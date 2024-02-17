@@ -57,3 +57,13 @@ func (c SystemController) CheckSystemUpdate(ctx *gin.Context) {
 	// 返回JSON数据
 	ctx.JSON(200, list)
 }
+
+func (c SystemController) CurrentLatestVersion(ctx *gin.Context) {
+	list, listErr := services.SystemService{}.CurrentLatestVersion()
+	if listErr != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": listErr.Error()})
+		return
+	}
+	// 返回JSON数据
+	ctx.JSON(200, list)
+}

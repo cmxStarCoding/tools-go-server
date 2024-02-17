@@ -59,3 +59,14 @@ func (s SystemService) CheckSystemUpdate(requestData *system.CheckSystemUpdateRe
 	}
 	return returnMap, nil
 }
+
+func (s SystemService) CurrentLatestVersion() (*models.SystemUpdateLogModel, error) {
+
+	systemUpdate := &models.SystemUpdateLogModel{}
+	result := database.DB.Last(&systemUpdate)
+	if result.Error != nil && errors.Is(result.Error, gorm.ErrRecordNotFound) {
+		return nil, fmt.Errorf("不存在版本")
+	}
+
+	return systemUpdate, nil
+}
