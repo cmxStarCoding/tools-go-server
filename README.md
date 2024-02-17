@@ -1,9 +1,6 @@
 ### 阿狸工具
 后端Go服务实现 ，阿狸工具-专注提高工作效率
 
-![Version](https://img.shields.io/badge/version-0.1.0-blue.svg)
-
-
 ### 运行环境
 - Golang1.19.13(需要开启go.mod)
 - Mysql8.0
