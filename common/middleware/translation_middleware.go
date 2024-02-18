@@ -15,10 +15,10 @@ import (
 )
 
 var (
-	UniMutex      sync.Mutex
-	Uni           *ut.UniversalTranslator
-	Validate      *validator.Validate
-	ValidateMutex sync.Mutex
+	UniMutex sync.Mutex
+	Uni      *ut.UniversalTranslator
+	Validate *validator.Validate
+	//ValidateMutex sync.Mutex
 )
 
 // TranslationsMiddleware 是用于处理翻译的中间件
@@ -27,8 +27,8 @@ func TranslationsMiddleware() gin.HandlerFunc {
 		UniMutex.Lock()
 		defer UniMutex.Unlock()
 
-		ValidateMutex.Lock()
-		defer ValidateMutex.Unlock()
+		//ValidateMutex.Lock()
+		//defer ValidateMutex.Unlock()
 
 		//记录日志
 		//gin.DefaultWriter.Write([]byte("Handling /ping request\n"))
