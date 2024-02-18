@@ -10,7 +10,7 @@ import (
 
 // SetupRoutes 设置API路由
 func SetupRoutes(r *gin.Engine) {
-	apiV1NoNeedLogin := r.Group("/api/v1")
+	apiV1NoNeedLogin := r.Group("/api/v1").Use(middleware.TranslationsMiddleware())
 	{
 		//贴图回调
 		apiV1NoNeedLogin.POST("/pic_paste_notify", controllers.PicPasteController{}.Notify)
@@ -39,7 +39,7 @@ func SetupRoutes(r *gin.Engine) {
 		apiV1NoNeedLogin.GET("/system_update_log", controllers.SystemController{}.SystemUpdateLog)
 
 	}
-	apiV1NeedLogin := r.Group("/api/v1").Use(middleware.JWTMiddleware())
+	apiV1NeedLogin := r.Group("/api/v1").Use(middleware.TranslationsMiddleware(), middleware.JWTMiddleware())
 	{
 		//上传文件
 		apiV1NeedLogin.POST("/upload", controllers.UploadController{}.UploadFile)
