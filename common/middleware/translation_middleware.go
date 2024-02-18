@@ -11,41 +11,53 @@ import (
 	entranslations "gopkg.in/go-playground/validator.v9/translations/en"
 	zhtranslations "gopkg.in/go-playground/validator.v9/translations/zh"
 	zhtwtranslations "gopkg.in/go-playground/validator.v9/translations/zh_tw"
+	"sync"
 )
 
 var (
-	Uni      *ut.UniversalTranslator
-	Validate *validator.Validate
+	UniMutex      sync.Mutex
+	Uni           *ut.UniversalTranslator
+	Validate      *validator.Validate
+	ValidateMutex sync.Mutex
 )
 
 // TranslationsMiddleware 是用于处理翻译的中间件
 func TranslationsMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		UniMutex.Lock()
+		defer UniMutex.Unlock()
+
+		ValidateMutex.Lock()
+		defer ValidateMutex.Unlock()
+
 		//记录日志
-		gin.DefaultWriter.Write([]byte("Handling /ping request\n"))
+		//gin.DefaultWriter.Write([]byte("Handling /ping request\n"))
 
 		//多语言翻译
-		Uni = ut.New(en.New(), zh.New())
-		Validate = validator.New()
+		if Uni == nil {
+			Uni = ut.New(en.New(), zh.New())
+		}
+		if Validate == nil {
+			Validate = validator.New()
+		}
+
 		locale := c.DefaultQuery("locale", "zh")
 		trans, _ := Uni.GetTranslator(locale)
+
 		switch locale {
 		case "zh":
 			zhtranslations.RegisterDefaultTranslations(Validate, trans)
-			break
 		case "en":
 			entranslations.RegisterDefaultTranslations(Validate, trans)
-			break
 		case "zh_tw":
 			zhtwtranslations.RegisterDefaultTranslations(Validate, trans)
-			break
 		default:
 			zhtranslations.RegisterDefaultTranslations(Validate, trans)
-			break
 		}
+
 		//自定义错误内容
-		c.Set("Validate",Validate)
-		c.Set("Trans",trans)
+		c.Set("Validate", Validate)
+		c.Set("Trans", trans)
 		c.Next()
 	}
 }

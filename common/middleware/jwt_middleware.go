@@ -3,7 +3,6 @@
 package middleware
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 	"tools/common/cache"
@@ -65,7 +64,7 @@ func JWTMiddleware() gin.HandlerFunc {
 		}
 
 		// 将解析后的用户信息存储到Context中，以便后续的处理函数使用
-		fmt.Println("请求token解析结果", claims.UserID, claims.Nickname)
+		//fmt.Println("请求token解析结果", claims.UserID, claims.Nickname)
 
 		c.Set("UserId", claims.UserID)
 		c.Set("Nickname", claims.Nickname)
