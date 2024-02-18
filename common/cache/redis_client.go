@@ -2,18 +2,25 @@ package cache
 
 import (
 	"github.com/go-redis/redis"
+	"github.com/spf13/viper"
 	"log"
 	"time"
 )
 
 var RedisClient *redis.Client
 
-func InitClient(projectConfig map[string]string) {
+func InitClient() {
 
-	host := projectConfig["redis_host"]
-	port := projectConfig["redis_port"]
-	password := projectConfig["redis_password"]
+	//host := projectConfig["redis_host"]
+	//port := projectConfig["redis_port"]
+	//password := projectConfig["redis_password"]
 
+	viper.SetConfigFile("../common/config.ini")
+	viper.ReadInConfig()
+
+	host := viper.GetString("redis.host")
+	password := viper.GetString("redis.password")
+	port := viper.GetString("redis.port")
 	// 连接到 Redis 服务器
 	RedisClient = redis.NewClient(&redis.Options{
 		Addr:         host + ":" + port, // Redis 服务器地址

@@ -3,8 +3,8 @@ package services
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 	"net/http"
-	"tools/common/config"
 )
 
 type UploadService struct {
@@ -17,7 +17,8 @@ func (s UploadService) UploadFile(ctx *gin.Context) (string, error) {
 		return "", fmt.Errorf("文件最大上传允许100M")
 	}
 	//log.Println(path.Ext(file.Filename)) //文件类型
-	projectConfig := config.Config
+	viper.SetConfigFile("../../../common/config.ini")
+	viper.ReadInConfig()
 	//gin.DefaultWriter.Write([]byte(""))
 	dst := "../static/" + file.Filename
 	// 上传文件至指定的完整文件路径
@@ -25,5 +26,5 @@ func (s UploadService) UploadFile(ctx *gin.Context) (string, error) {
 	if uploadErr != nil {
 		return "", fmt.Errorf(uploadErr.Error())
 	}
-	return projectConfig["app_domain"] + "/static/" + file.Filename, nil
+	return viper.GetString("app.domain") + "/static/" + file.Filename, nil
 }

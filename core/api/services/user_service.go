@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 	"gorm.io/gorm"
 	"log"
 	"math/rand"
@@ -11,7 +12,6 @@ import (
 	"strconv"
 	"time"
 	"tools/common/cache"
-	"tools/common/config"
 	"tools/common/database"
 	"tools/common/utils"
 	"tools/core/api/models"
@@ -64,14 +64,15 @@ func (s UserService) UserRegister(requestData *user.RegisterRequest) (*models.Us
 	db := database.DB
 	userFullInfo := &models.UserFullModel{}
 	err := db.Where("account = ?", requestData.Account).First(userFullInfo).Error
-	projectConfig := config.Config
+	viper.SetConfigFile("../../../common/config.ini")
+	viper.ReadInConfig()
 	if err == nil {
 		return nil, fmt.Errorf("该账号已被注册")
 	}
 	userFullInfo.Account = requestData.Account
 	userFullInfo.Password = utils.Md5Hash(requestData.Password)
 	userFullInfo.Nickname = requestData.Account
-	userFullInfo.AvatarUrl = projectConfig["app_domain"] + "/static/avatar1.png"
+	userFullInfo.AvatarUrl = viper.GetString("app.domain") + "/static/avatar1.png"
 
 	err = database.DB.Create(userFullInfo).Error
 	if err != nil {

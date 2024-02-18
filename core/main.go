@@ -4,7 +4,6 @@ import (
 	"flag"
 	"github.com/gin-gonic/gin"
 	"tools/common/cache"
-	"tools/common/config"
 	"tools/common/database"
 	"tools/common/middleware"
 	"tools/common/utils"
@@ -24,7 +23,6 @@ func main() {
 	r := gin.Default()
 
 	//加载配置文件
-	projectConfig := config.InitConfig(env)
 	// 为 multipart forms 设置较低的内存限制 (默认是 32 MiB)
 	r.MaxMultipartMemory = 2 << 20 // 8 MiB
 
@@ -32,9 +30,9 @@ func main() {
 	//初始化日志文件
 	utils.SetupLogger()
 	// 初始化数据库连接
-	database.InitDB(projectConfig)
+	database.InitDB()
 	// 初始化redis链接
-	cache.InitClient(projectConfig)
+	cache.InitClient()
 	// 设置API路由
 	v1.SetupRoutes(r)
 	//静态资源配置

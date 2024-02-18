@@ -2,6 +2,7 @@ package database
 
 import (
 	"fmt"
+	"github.com/spf13/viper"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
@@ -13,13 +14,22 @@ var (
 )
 
 // InitDB 初始化数据库连接
-func InitDB(projectConfig map[string]string) {
+func InitDB() {
 
-	database := projectConfig["db_database"]
-	host := projectConfig["db_host"]
-	username := projectConfig["db_username"]
-	password := projectConfig["db_password"]
-	port := projectConfig["db_port"]
+	//database := projectConfig["db_database"]
+	//host := projectConfig["db_host"]
+	//username := projectConfig["db_username"]
+	//password := projectConfig["db_password"]
+	//port := projectConfig["db_port"]
+
+	viper.SetConfigFile("../common/config.ini")
+	viper.ReadInConfig()
+
+	database := viper.GetString("db.database")
+	host := viper.GetString("db.host")
+	username := viper.GetString("db.username")
+	password := viper.GetString("db.password")
+	port := viper.GetString("db.port")
 
 	dsn := username + ":" + password + "@tcp(" + host + ":" + port + ")/" + database + "?charset=utf8mb4&parseTime=True&loc=Local"
 	var connectorErr error

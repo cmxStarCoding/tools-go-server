@@ -17,7 +17,7 @@ go mod download
 ```
 配置mysql以及redis：
 ```bash
-#配置redis、mysql(在common目录下新建local_config.ini文件)
+#配置redis、mysql(在common目录下新建config.ini文件写入如下配置,可复制config_example.ini文件内容)
 [app]
 domain = http://127.0.0.1:8083
 name = 阿狸工具

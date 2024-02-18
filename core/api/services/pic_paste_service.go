@@ -5,9 +5,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 	"io"
 	"net/http"
-	"tools/common/config"
 	"tools/common/database"
 	"tools/core/api/models"
 	"tools/core/api/validator/pic"
@@ -33,10 +33,10 @@ func (s PicPasteService) DoTask(userPicStrategy *models.UserPicPasteStrategyMode
 	if mapErr != nil {
 		gin.DefaultWriter.Write([]byte(fmt.Sprintf("转化map错误，错误原因%s", mapErr.Error())))
 	}
-
-	projectConfig := config.Config
+	viper.SetConfigFile("../../../common/config.ini")
+	viper.ReadInConfig()
 	requestMap["batch_no"] = TaskId
-	requestMap["notify_url"] = projectConfig["app_domain"] + "/api/v1/pic_paste_notify"
+	requestMap["notify_url"] = viper.GetString("app.domain") + "/api/v1/pic_paste_notify"
 	requestMap["compress_file_url"] = compressFileUrl
 
 	//将字典转化为json
