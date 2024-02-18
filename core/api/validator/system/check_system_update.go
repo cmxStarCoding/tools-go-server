@@ -3,7 +3,6 @@ package system
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	ut "github.com/go-playground/universal-translator"
 	"gopkg.in/go-playground/validator.v9"
 	"reflect"
 )
@@ -14,7 +13,7 @@ type CheckSystemUpdateRequest struct {
 
 func ValidateCheckSystemUpdateRequest(c *gin.Context) (*CheckSystemUpdateRequest, error) {
 	var request CheckSystemUpdateRequest
-	utTrans := c.Value("Trans").(ut.Translator)
+	//utTrans := c.Value("Trans").(ut.Translator)
 	Validate, _ := c.Get("Validate")
 	validatorInstance, _ := Validate.(*validator.Validate)
 	if err := c.ShouldBindJSON(&request); err != nil {
@@ -27,12 +26,12 @@ func ValidateCheckSystemUpdateRequest(c *gin.Context) (*CheckSystemUpdateRequest
 	// 进行进一步的验证
 	err := validatorInstance.Struct(request) //这里的err是未翻译之前的
 	if err != nil {
-		errs := err.(validator.ValidationErrors)
-		var sliceErrs []string
-		for _, e := range errs {
-			sliceErrs = append(sliceErrs, e.Translate(utTrans))
-		}
-		return nil, fmt.Errorf(sliceErrs[0])
+		//errs := err.(validator.ValidationErrors)
+		//var sliceErrs []string
+		//for _, e := range errs {
+		//	sliceErrs = append(sliceErrs, e.Translate(utTrans))
+		//}
+		return nil, fmt.Errorf(err.Error())
 	}
 	return &request, nil
 }
