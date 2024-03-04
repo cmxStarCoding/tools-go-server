@@ -3,8 +3,8 @@
 
 ### 运行环境
 - Golang1.19.13(需要开启go.mod)
-- Mysql8.0
-- Redis5+
+- Mysql8.0+
+- Redis5.0+
 
 
 ### 安装
