@@ -4,5 +4,5 @@ cd alitools
 go mod tidy
 go build -o alitools
 #killall core
-kill $(lsof -i :8083 -t)
-nohup ./alitools --env=prod &
+#kill $(lsof -i :8083 -t)
+#nohup ./alitools --env=prod &
