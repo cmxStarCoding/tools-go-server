@@ -2,7 +2,6 @@ package models
 
 import (
 	"gorm.io/gorm"
-	"time"
 )
 
 // 定义常量
@@ -19,8 +18,8 @@ type ToolsModel struct {
 	CategoryId  uint           `gorm:"column:category_id" json:"category_id"`
 	IsRecommend uint           `gorm:"column:is_recommend" json:"is_recommend"`
 	Router      string         `gorm:"column:router" json:"router"`
-	CreatedAt   time.Time      `gorm:"column:created_at" json:"created_at"`
-	UpdatedAt   time.Time      `gorm:"column:updated_at" json:"updated_at"`
+	CreatedAt   TimeNormal     `gorm:"column:created_at" json:"created_at"`
+	UpdatedAt   TimeNormal     `gorm:"column:updated_at" json:"updated_at"`
 	DeletedAt   gorm.DeletedAt `gorm:"column:deleted_at" json:"deleted_at"`
 }
 

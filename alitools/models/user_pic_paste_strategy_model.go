@@ -2,7 +2,6 @@ package models
 
 import (
 	"gorm.io/gorm"
-	"time"
 )
 
 type UserPicPasteStrategyModel struct {
@@ -19,8 +18,8 @@ type UserPicPasteStrategyModel struct {
 	BcShape          uint           `gorm:"column:bc_shape" json:"bc_shape"`
 	BcColor          string         `gorm:"column:bc_color" json:"bc_color"`
 	SideLength       uint           `gorm:"column:side_length" json:"side_length"`
-	CreatedAt        time.Time      `gorm:"column:created_at" json:"created_at"`
-	UpdatedAt        time.Time      `gorm:"column:updated_at" json:"updated_at"`
+	CreatedAt        TimeNormal     `gorm:"column:created_at" json:"created_at"`
+	UpdatedAt        TimeNormal     `gorm:"column:updated_at" json:"updated_at"`
 	DeletedAt        gorm.DeletedAt `gorm:"column:deleted_at" json:"deleted_at"`
 	User             UserModel      `json:"user"`
 }
