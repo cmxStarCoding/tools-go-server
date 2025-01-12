@@ -1,6 +1,6 @@
 .idea
 common/config.ini
 core/gin.log
-core/core
+alitools/alitools
 go.sum
 static

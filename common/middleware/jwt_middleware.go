@@ -1,13 +1,10 @@
-// core/api/controllers/middleware.go
-
 package middleware
 
 import (
+	"journey/common/cache"
+	utils2 "journey/common/utils"
 	"net/http"
 	"strings"
-	"tools/common/cache"
-	utils2 "tools/common/utils"
-	"tools/core/api/utils"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
@@ -42,9 +39,9 @@ func JWTMiddleware() gin.HandlerFunc {
 		}
 
 		// 解析Token
-		claims := &utils.CustomClaims{}
+		claims := &CustomClaims{}
 		token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
-			return utils.JwtSecret, nil
+			return JwtSecret, nil
 		})
 
 		if err != nil {

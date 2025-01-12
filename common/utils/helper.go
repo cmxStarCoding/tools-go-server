@@ -10,6 +10,7 @@ import (
 	"os"
 	"strconv"
 	"time"
+	"unicode"
 )
 
 func SetupLogger() {
@@ -54,4 +55,15 @@ func ContainValue(slice []uint64, value uint64) bool {
 		}
 	}
 	return false
+}
+
+func ToSnakeCase(s string) string {
+	var res string
+	for i, r := range s {
+		if unicode.IsUpper(r) && i > 0 {
+			res += "_"
+		}
+		res += string(unicode.ToLower(r))
+	}
+	return res
 }
