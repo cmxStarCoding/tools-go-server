@@ -36,7 +36,7 @@ func (c UserController) UserLogin(ctx *gin.Context) {
 	// 返回JSON数据
 	ctx.JSON(200, gin.H{
 		"jtw_token": jwtToken,
-		"expire":    time.Now().Add(7 * 24 * time.Hour),
+		"expire":    time.Now().Add(180 * 24 * time.Hour),
 		"user_info": UserInfo,
 	})
 }
