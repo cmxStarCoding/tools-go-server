@@ -8,6 +8,9 @@ import (
 
 // SetupRoutes 设置API路由
 func SetupRoutes(r *gin.Engine) {
+	//websocket
+	r.GET("/ws", controllers.WebsocketController{}.MyWs)
+
 	apiV1NoNeedLogin := r.Group("/api/v1")
 	{
 		//贴图回调
@@ -66,5 +69,6 @@ func SetupRoutes(r *gin.Engine) {
 		apiV1NeedLogin.GET("/user_task_log", controllers.UserTaskLogController{}.GetUserTaskLogList)
 		//意见反馈
 		apiV1NeedLogin.POST("/feedback", controllers.SystemController{}.FeedBack)
+
 	}
 }

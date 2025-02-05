@@ -11,7 +11,7 @@ func RegisterCron() {
 	//c := cron.New(cron.WithSeconds()) //秒级别的定时器，只能运行秒级的
 	// 每分钟运行一次
 	_, _ = c.AddFunc("* * * * *", func() {
-		fmt.Println("分钟级定时器执行了")
+		//fmt.Println("分钟级定时器执行了")
 
 		// 在这里执行你的脚本或任务
 		//if utils.IsProd() {
@@ -40,7 +40,7 @@ func RegisterCron() {
 func RegisterSecondCron() {
 	s := cron.New(cron.WithSeconds()) //秒级别的定时器，只能运行秒级的
 	_, _ = s.AddFunc("*/3 * * * * *", func() {
-		fmt.Println("秒级定时器执行了")
+		//fmt.Println("秒级定时器执行了")
 
 	})
 	s.Start()
