@@ -2,5 +2,7 @@
 common/config.ini
 core/gin.log
 alitools/alitools
+alitools/*.log
 go.sum
 static
+
