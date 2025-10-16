@@ -43,7 +43,7 @@ func main() {
 	cache.InitClient()
 	//初始化rabbitmq链接
 	rabbitmq.InitRabbitMQ()
-	//开启mq任务
+	//开启消息队列任务
 	mqlogic.StartMqTask()
 	// 设置API路由
 	routes.SetupRoutes(r)
