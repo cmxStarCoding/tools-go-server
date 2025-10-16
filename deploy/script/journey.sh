@@ -14,14 +14,14 @@ tag=$VERSION
 
 container_name=${SERVER_NAME}
 
-docker stop ${container_name}
-
-docker rm ${container_name}
-
-docker rmi ${reso_addr}:${tag}
 
 docker pull ${reso_addr}:${tag}
 
+#docker rmi ${reso_addr}:${tag}
+
+docker stop ${container_name}
+
+docker rm ${container_name}
 
 # 如果需要指定配置文件的
 # docker run -p 10001:8080 --network imooc_easy-chat -v /easy-chat/config/user-rpc:/user/conf/ --name=${container_name} -d ${reso_addr}:${tag}

@@ -9,7 +9,7 @@ fi
 echo "🚀 当前部署版本号: $VERSION"
 
 need_start_server_shell=(
-  app.sh
+  journey.sh
 )
 
 for i in ${need_start_server_shell[@]} ; do
