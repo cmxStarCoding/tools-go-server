@@ -13,4 +13,4 @@ release: app
 
 #构建生产
 install-server:
-	cd ./deploy/script && chmod +x publish.sh && ./publish.sh
+	cd ./deploy/script && chmod +x publish.sh && ./publish.sh $(VERSION)
