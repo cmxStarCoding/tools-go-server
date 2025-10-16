@@ -1,8 +1,10 @@
 .idea
-common/config.ini
+config.ini
 core/gin.log
 alitools/alitools
 alitools/*.log
 go.sum
 static
+journey
+*.log
 

@@ -22,7 +22,7 @@ func InitDB() {
 	//password := projectConfig["db_password"]
 	//port := projectConfig["db_port"]
 
-	viper.SetConfigFile("../common/config.ini")
+	viper.SetConfigFile("./config.ini")
 	viper.ReadInConfig()
 
 	database := viper.GetString("db.database")

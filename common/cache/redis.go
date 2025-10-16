@@ -15,7 +15,7 @@ func InitClient() {
 	//port := projectConfig["redis_port"]
 	//password := projectConfig["redis_password"]
 
-	viper.SetConfigFile("../common/config.ini")
+	viper.SetConfigFile("./common/config.ini")
 	viper.ReadInConfig()
 
 	host := viper.GetString("redis.host")
