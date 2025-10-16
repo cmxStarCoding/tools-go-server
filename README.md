@@ -2,7 +2,8 @@
 后端Go服务实现 ，阿狸工具-专注提高工作效率
 
 ### 运行环境
-- Golang1.19.13(需要开启go.mod)
+- Docker
+- Golang1.23(需要开启go.mod)
 - Mysql8.0+
 - Redis5.0+
 - Rabbitmq
@@ -14,7 +15,16 @@
 ```bash
 git clone git@github.com:cmxStarCoding/tools-go-server.git
 
-go mod download
+go mod tidy
+
+#编译发布(注意是私有化部署,需要本地docker登录阿里云制品仓库，且创建好命名空间person-collect和仓库journey,
+#你可以调整命名空间和仓库这两项，当然同时也需要调整发布脚本)
+make release VERSION=v1.0.0
+
+#部署安装
+make install-server VERSION=v1.0.0
+
+
 ```
 配置mysql以及redis：
 ```bash

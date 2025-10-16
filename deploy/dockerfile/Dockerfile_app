@@ -21,6 +21,7 @@ RUN mkdir /$SERVER_NAME && mkdir /$SERVER_NAME/bin && mkdir /$SERVER_NAME/conf
 
 # 将本地构建好的二进制文件复制到容器中。需要二进制
 COPY ./bin/$SERVER_NAME /$SERVER_NAME/bin/
+COPY ./bin/config.ini /$SERVER_NAME/config.ini
 
 #动态配置的目录
 #RUN mkdir -p /$SERVER_NAME/etc/conf
