@@ -3,13 +3,13 @@ package main
 import (
 	"flag"
 	"github.com/gin-gonic/gin"
-	"journey/alitools/cmd"
-	"journey/alitools/cron"
-	"journey/alitools/routes"
+	"journey/cmd"
 	"journey/common/cache"
 	"journey/common/database"
 	"journey/common/middleware"
 	"journey/common/utils"
+	"journey/cron"
+	"journey/routes"
 )
 
 func main() {

@@ -1,9 +1,9 @@
 package services
 
 import (
-	"journey/alitools/api/validator"
-	"journey/alitools/models"
+	"journey/api/validator"
 	"journey/common/database"
+	"journey/models"
 )
 
 type ToolsService struct{}

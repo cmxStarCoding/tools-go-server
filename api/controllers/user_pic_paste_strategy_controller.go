@@ -2,8 +2,8 @@ package controllers
 
 import (
 	"github.com/gin-gonic/gin"
-	"journey/alitools/api/services"
-	"journey/alitools/api/validator"
+	"journey/api/services"
+	"journey/api/validator"
 	"journey/common/utils"
 	"net/http"
 )

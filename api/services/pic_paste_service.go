@@ -7,19 +7,19 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	"io"
-	"journey/alitools/api/validator"
-	models2 "journey/alitools/models"
+	"journey/api/validator"
 	"journey/common/database"
+	"journey/models"
 	"net/http"
 )
 
 type PicPasteService struct {
 }
 
-func (s PicPasteService) DoTask(userPicStrategy *models2.UserPicPasteStrategyModel, TaskId any, compressFileUrl string) {
+func (s PicPasteService) DoTask(userPicStrategy *models.UserPicPasteStrategyModel, TaskId any, compressFileUrl string) {
 
 	//修改对应状态为执行中
-	userTaskLog := &models2.UserTaskLogModel{}
+	userTaskLog := &models.UserTaskLogModel{}
 	database.DB.Where("task_id = ?", TaskId).First(userTaskLog)
 	userTaskLog.Status = 2
 	database.DB.Save(userTaskLog)

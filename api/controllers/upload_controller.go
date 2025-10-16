@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"github.com/gin-gonic/gin"
-	"journey/alitools/api/services"
+	"journey/api/services"
 	"net/http"
 )
 

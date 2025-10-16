@@ -3,10 +3,10 @@ package services
 import (
 	"encoding/json"
 	"fmt"
-	"journey/alitools/api/validator"
-	models2 "journey/alitools/models"
+	"journey/api/validator"
 	"journey/common/database"
 	"journey/common/utils"
+	"journey/models"
 )
 
 type UserTaskLogService struct{}
@@ -14,7 +14,7 @@ type UserTaskLogService struct{}
 func (s UserTaskLogService) GetUserTaskLogList(requestData *validator.GetTaskLogListRequest, UserId uint) (map[string]interface{}, error) {
 
 	type ExtendedUserTaskLog struct {
-		models2.UserTaskLogModel
+		models.UserTaskLogModel
 		StatusText string `gorm:"-" json:"status_text"`
 	}
 
@@ -24,7 +24,7 @@ func (s UserTaskLogService) GetUserTaskLogList(requestData *validator.GetTaskLog
 		query.Where("status = ?", requestData.Status)
 	}
 	var total int64
-	query.Model(&models2.UserTaskLogModel{}).Count(&total)
+	query.Model(&models.UserTaskLogModel{}).Count(&total)
 	query.Limit(int(requestData.Limit)).Offset((int(requestData.Page) - 1) * int(requestData.Limit)).Preload("Tools").Preload("User").Find(&mapList)
 
 	var result = make(map[string]interface{})
@@ -47,16 +47,16 @@ func (s UserTaskLogService) GetUserTaskLogList(requestData *validator.GetTaskLog
 	return result, nil
 }
 
-func (s UserTaskLogService) CreateTask(strategyId uint, toolsMark string, UserId uint) (*models2.UserPicPasteStrategyModel, string, error) {
-	tools := &models2.ToolsModel{}
+func (s UserTaskLogService) CreateTask(strategyId uint, toolsMark string, UserId uint) (*models.UserPicPasteStrategyModel, string, error) {
+	tools := &models.ToolsModel{}
 	database.DB.Where("mark = ?", toolsMark).First(tools)
 
-	userPicStrategy := &models2.UserPicPasteStrategyModel{}
+	userPicStrategy := &models.UserPicPasteStrategyModel{}
 	database.DB.Where("id = ?", strategyId).First(userPicStrategy)
 
 	taskIdString := utils.GenerateUniqueRandomString()
 	requestData, _ := json.Marshal(userPicStrategy)
-	UserTaskLog := models2.UserTaskLogModel{
+	UserTaskLog := models.UserTaskLogModel{
 		ToolId:      tools.ID,
 		UserId:      UserId,
 		TaskId:      taskIdString,
@@ -92,7 +92,7 @@ func (s UserTaskLogService) EditTaskStatus(request *validator.NotifyRequest) {
 	if request.Status <= 0 {
 		return
 	}
-	userTaskLog := &models2.UserTaskLogModel{}
+	userTaskLog := &models.UserTaskLogModel{}
 	resultError := database.DB.Where("task_id = ?", request.BatchNo).First(userTaskLog)
 	if resultError.Error != nil {
 		return
@@ -108,7 +108,7 @@ func (s UserTaskLogService) EditTaskStatus(request *validator.NotifyRequest) {
 	userTaskLog.RequestResult = string(jsonStr)
 	database.DB.Save(userTaskLog)
 	//添加一条使用记录
-	userUseLog := &models2.UserUseLogModel{}
+	userUseLog := &models.UserUseLogModel{}
 	userUseLog.ToolId = userTaskLog.ToolId
 	userUseLog.UserId = userTaskLog.UserId
 	database.DB.Save(userUseLog)

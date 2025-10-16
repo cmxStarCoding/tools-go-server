@@ -4,9 +4,9 @@ import (
 	"errors"
 	"fmt"
 	"gorm.io/gorm"
-	"journey/alitools/api/validator"
-	"journey/alitools/models"
+	"journey/api/validator"
 	"journey/common/database"
+	"journey/models"
 )
 
 type UserPicPasteStrategyService struct {

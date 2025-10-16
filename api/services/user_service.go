@@ -6,11 +6,11 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	"gorm.io/gorm"
-	"journey/alitools/api/validator"
-	models2 "journey/alitools/models"
+	"journey/api/validator"
 	"journey/common/cache"
 	"journey/common/database"
 	"journey/common/utils"
+	"journey/models"
 	"log"
 	"math/rand"
 	"net/smtp"
@@ -28,11 +28,11 @@ var (
 type UserService struct{}
 
 // GetUserByID 根据用户ID获取用户信息
-func (s UserService) GetUserByID(userID uint) *models2.UserModel {
+func (s UserService) GetUserByID(userID uint) *models.UserModel {
 	// 获取数据库连接
 	db := database.DB
 	// 调用模型方法从数据库中获取用户
-	userInfo := &models2.UserModel{}
+	userInfo := &models.UserModel{}
 	//db.Where("user_id = ?", userID).First(userInfo)
 	db.First(&userInfo, userID)
 	return userInfo
@@ -48,10 +48,10 @@ func (s UserService) UserLogout(ctx *gin.Context) (string, error) {
 	return "ok", nil
 }
 
-func (s UserService) UserLogin(account string, password string) (*models2.UserModel, error) {
+func (s UserService) UserLogin(account string, password string) (*models.UserModel, error) {
 	// 获取数据库连接
 	db := database.DB
-	userInfo := &models2.UserModel{}
+	userInfo := &models.UserModel{}
 	result := db.Where("account = ?", account).Where("password = ?", utils.Md5Hash(password)).First(userInfo)
 	if result.Error != nil && errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		return nil, AccountOrPasswordValid
@@ -59,10 +59,10 @@ func (s UserService) UserLogin(account string, password string) (*models2.UserMo
 	return userInfo, nil
 }
 
-func (s UserService) UserRegister(requestData *validator.RegisterRequest) (*models2.UserModel, error) {
+func (s UserService) UserRegister(requestData *validator.RegisterRequest) (*models.UserModel, error) {
 	// 获取数据库连接
 	db := database.DB
-	userFullInfo := &models2.UserFullModel{}
+	userFullInfo := &models.UserFullModel{}
 	err := db.Where("account = ?", requestData.Account).First(userFullInfo).Error
 	viper.SetConfigFile("../../../common/config.ini")
 	viper.ReadInConfig()
@@ -78,14 +78,14 @@ func (s UserService) UserRegister(requestData *validator.RegisterRequest) (*mode
 	if err != nil {
 		return nil, err
 	}
-	userInfo := &models2.UserModel{}
+	userInfo := &models.UserModel{}
 	db.Where("account = ?", requestData.Account).First(userInfo)
 	return userInfo, nil
 }
 
-func (s UserService) EditUserProfile(requestData *validator.EditProfileRequest, userId uint) (*models2.UserModel, error) {
+func (s UserService) EditUserProfile(requestData *validator.EditProfileRequest, userId uint) (*models.UserModel, error) {
 
-	userInfo := &models2.UserModel{}
+	userInfo := &models.UserModel{}
 
 	result := database.DB.Where("id = ?", userId).First(userInfo)
 
@@ -106,7 +106,7 @@ func (s UserService) EditUserProfile(requestData *validator.EditProfileRequest, 
 
 func (s UserService) EditPassword(requestData *validator.EditPasswordRequest, UserId uint) (string, error) {
 
-	userInfo := &models2.UserFullModel{}
+	userInfo := &models.UserFullModel{}
 	result := database.DB.Where("id = ?", UserId).Select("ID", "Password").First(userInfo)
 	if result.Error != nil && errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		return "ok", ErrUserNotFound
@@ -132,7 +132,7 @@ func (s UserService) EditPassword(requestData *validator.EditPasswordRequest, Us
 
 func (s UserService) ForgetPasswordReset(requestData *validator.ForgetPasswordResetRequest) (string, error) {
 
-	user := &models2.UserFullModel{}
+	user := &models.UserFullModel{}
 	result := database.DB.Where("account = ?", requestData.Account).First(user)
 	if result.Error != nil && errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		return "ok", ErrUserNotFound
@@ -146,7 +146,7 @@ func (s UserService) ForgetPasswordReset(requestData *validator.ForgetPasswordRe
 	}
 
 	//查询最新一条邮箱验证码
-	userResetPassword := &models2.UserResetPasswordModel{}
+	userResetPassword := &models.UserResetPasswordModel{}
 	userResetPasswordResult := database.DB.Where("account = ?", requestData.Account).Last(userResetPassword)
 	if userResetPasswordResult.Error != nil && errors.Is(userResetPasswordResult.Error, gorm.ErrRecordNotFound) {
 		return "ok", EmailVerifyRecordNotFound
@@ -165,7 +165,7 @@ func (s UserService) SendEmailCode(requestData *validator.SendEmailCodeRequest) 
 
 	todayStart := time.Now().Truncate(24 * time.Hour)
 	var sendEmailCount int64
-	countResult := database.DB.Model(&models2.UserResetPasswordModel{}).Where("created_at > ?", todayStart).Count(&sendEmailCount)
+	countResult := database.DB.Model(&models.UserResetPasswordModel{}).Where("created_at > ?", todayStart).Count(&sendEmailCount)
 	if countResult.Error != nil {
 		return "", fmt.Errorf("查询统计失败")
 	}
@@ -204,7 +204,7 @@ func (s UserService) SendEmailCode(requestData *validator.SendEmailCodeRequest) 
 	if err != nil {
 		return "", fmt.Errorf("发送邮件时发生错误")
 	}
-	userResetPassword := &models2.UserResetPasswordModel{
+	userResetPassword := &models.UserResetPasswordModel{
 		Account:  requestData.Account,
 		UseEmail: requestData.UseEmail,
 		Code:     strconv.Itoa(code),

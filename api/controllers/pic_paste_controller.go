@@ -3,9 +3,9 @@ package controllers
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"journey/alitools/api/services"
-	"journey/alitools/api/validator"
-	"journey/alitools/models"
+	"journey/api/services"
+	"journey/api/validator"
+	"journey/models"
 	"net/http"
 )
 

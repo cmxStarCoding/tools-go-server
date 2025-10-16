@@ -4,13 +4,13 @@ package controllers
 
 import (
 	"github.com/gin-gonic/gin"
-	"journey/alitools/api/services"
-	"journey/alitools/api/validator"
+	"journey/api/services"
+	"journey/api/validator"
 	"journey/common/middleware"
 	"log"
 	"net/http"
 	"time"
-	//"journey/alitools/api/utils"
+	//"journey/api/utils"
 )
 
 // UserController 用户控制器
