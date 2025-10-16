@@ -5,6 +5,7 @@ import (
 	"github.com/robfig/cron/v3"
 )
 
+// RegisterCron 分钟级别的定时任务，最小到分钟级别
 func RegisterCron() {
 	// 创建 cron 实例
 	c := cron.New()
@@ -37,6 +38,7 @@ func RegisterCron() {
 	c.Start()
 }
 
+// RegisterSecondCron 秒级别的定时任务，最小到秒级
 func RegisterSecondCron() {
 	s := cron.New(cron.WithSeconds()) //秒级别的定时器，只能运行秒级的
 	_, _ = s.AddFunc("*/3 * * * * *", func() {
