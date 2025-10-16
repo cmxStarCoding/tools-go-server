@@ -15,6 +15,7 @@ clean_old_images() {
 
         images=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep "${IMAGE_REPO}:v" | sort -V)
 
+        #mac下会失败，head -n -N 是 GNU head（Linux） 支持的语法
         delete_images=($(echo "$images" | head -n -$KEEP_COUNT))
 
         for img in "${delete_images[@]}"; do
