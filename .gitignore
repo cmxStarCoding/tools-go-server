@@ -5,6 +5,7 @@ alitools/alitools
 alitools/*.log
 go.sum
 static
-journey
+bin/app
+bin/*
 *.log
 
