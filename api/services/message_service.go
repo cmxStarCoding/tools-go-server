@@ -14,7 +14,7 @@ func (s MessageService) SendMessage(message string) {
 	log.Println("👀 Received11:", message)
 	UserId := 17
 	ws.ClientsMu.RLock()
-	conn, ok := ws.Clients[uint(UserId)]
+	conn, ok := ws.UserIdToConn[uint(UserId)]
 	ws.ClientsMu.RUnlock()
 	if !ok {
 		log.Printf("👀 用户id%d未连接websocket服务", UserId)
