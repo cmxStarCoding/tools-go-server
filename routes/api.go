@@ -4,12 +4,13 @@ import (
 	"github.com/gin-gonic/gin"
 	"journey/api/controllers"
 	"journey/common/middleware"
+	"journey/ws"
 )
 
 // SetupRoutes 设置API路由
 func SetupRoutes(r *gin.Engine) {
 	//websocket
-	r.GET("/ws", controllers.WebsocketController{}.MyWs)
+	//r.GET("/ws", controllers.WebsocketController{}.MyWs)
 
 	apiV1NoNeedLogin := r.Group("/api/v1")
 	{
@@ -42,6 +43,8 @@ func SetupRoutes(r *gin.Engine) {
 	}
 	apiV1NeedLogin := r.Group("/api/v1").Use(middleware.JWTMiddleware())
 	{
+		//websocket
+		apiV1NeedLogin.GET("/ws", ws.WsHandler)
 		//上传文件
 		apiV1NeedLogin.POST("/upload", controllers.UploadController{}.UploadFile)
 		//获取用户详情

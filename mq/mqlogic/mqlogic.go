@@ -1,6 +1,7 @@
 package mqlogic
 
 import (
+	"journey/api/services"
 	"journey/mq/rabbitmq"
 	"log"
 )
@@ -12,7 +13,7 @@ func StartMqTask() {
 	})
 
 	rabbitmq.Consume("test_queue2", func(msg string) {
-		log.Println("👀 Received11:", msg)
+		services.MessageService{}.SendMessage(msg)
 	})
 
 }
