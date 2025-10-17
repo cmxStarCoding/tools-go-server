@@ -6,12 +6,17 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"io"
+	"log"
 	"math/rand"
 	"os"
+	"path/filepath"
 	"strconv"
+	"sync"
 	"time"
 	"unicode"
 )
+
+var logLock sync.Mutex
 
 func SetupLogger() {
 	//设置日志文件
@@ -66,4 +71,35 @@ func ToSnakeCase(s string) string {
 		res += string(unicode.ToLower(r))
 	}
 	return res
+}
+
+func WriteLog(filePath, message string) error {
+	dateDir := time.Now().Format("20060102")
+	logDir := filepath.Join("log", dateDir)
+
+	// 自动创建目录（若不存在）
+	if err := os.MkdirAll(logDir, os.ModePerm); err != nil {
+		return fmt.Errorf("创建日志目录失败: %w", err)
+	}
+
+	// 日志文件路径
+	fullPath := filepath.Join(logDir, filePath+".log")
+
+	// 加锁防止并发写冲突
+	logLock.Lock()
+	defer logLock.Unlock()
+
+	// 打开或创建文件
+	file, err := os.OpenFile(fullPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		return fmt.Errorf("无法打开日志文件: %w", err)
+	}
+	defer file.Close()
+
+	// 创建日志记录器（标准格式）
+	logger := log.New(file, "", log.LstdFlags)
+	logMessage := fmt.Sprintf("[%s] %s", filePath, message)
+	logger.Println(logMessage)
+
+	return nil
 }

@@ -29,7 +29,7 @@ func main() {
 	r.MaxMultipartMemory = 2 << 20 // 8 MiB
 	//设置跨域中间件
 	r.Use(middleware.CORSMiddleware())
-	//初始化日志文件
+	//初始化gin日志文件，如果不设置，只会输出在控制台
 	utils.SetupLogger()
 	// 初始化数据库连接
 	database.InitDB()
