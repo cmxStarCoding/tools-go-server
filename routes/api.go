@@ -11,11 +11,15 @@ import (
 func SetupRoutes(r *gin.Engine) {
 	apiV1NoNeedLogin := r.Group("/api/v1")
 	{
-		ctrl := &controllers.CategoryController{}
+		category := &controllers.CategoryController{}
 		//获取分类工具列表
-		apiV1NoNeedLogin.GET("/cate_tools_list", ctrl.GetCategoryToolsList)
+		apiV1NoNeedLogin.GET("/cate_tools_list", category.GetCategoryToolsList)
 		//分类列表
-		apiV1NoNeedLogin.GET("/category/list", ctrl.GetCategoryList)
+		apiV1NoNeedLogin.GET("/category/list", category.GetCategoryList)
+
+		system := &controllers.SystemController{}
+		//分类列表
+		apiV1NoNeedLogin.GET("/feedback", system.FeedBack)
 
 		//用户登录
 		apiV1NoNeedLogin.POST("/user/login", controllers.UserController{}.UserLogin)

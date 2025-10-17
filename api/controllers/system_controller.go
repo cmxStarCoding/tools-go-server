@@ -10,21 +10,14 @@ import (
 type SystemController struct {
 }
 
-func (c SystemController) FeedBack(ctx *gin.Context) {
-
-	request, err := validator.ValidateFeedbackRequest(ctx)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-	userId := ctx.Value("UserId").(uint)
-	result, resultErr := services.SystemService{}.FeedBack(request, userId)
-	if resultErr != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": resultErr.Error()})
-		return
-	}
-	// 返回JSON数据
-	ctx.JSON(200, result)
+func (c *SystemController) FeedBack(ctx *gin.Context) {
+	HandleRequest(ctx,
+		validator.ValidateFeedbackRequest,
+		func(req *validator.FeedbackRequest) (string, error) {
+			UserId := ctx.Value("UserId").(uint)
+			return services.SystemService{}.FeedBack(req, UserId)
+		},
+	)
 }
 
 func (c SystemController) SystemUpdateLog(ctx *gin.Context) {

@@ -8,8 +8,8 @@ import (
 // HandleRequest 通用函数
 func HandleRequest[Req any, Res any](
 	ctx *gin.Context,
-	validate func(*gin.Context) (Req, error),
-	handle func(Req) (Res, error),
+	validate func(*gin.Context) (Req, error), //Req由validate函数的返回类型来推导
+	handle func(Req) (Res, error), //Res由handle函数的返回类型来推导
 ) {
 	req, err := validate(ctx)
 	if err != nil {
