@@ -1,7 +1,9 @@
 package validator
 
 // 引入你的泛型通用校验函数和 Gin
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+)
 
 // GetCategoryListRequest 请求结构体
 type GetCategoryListRequest struct {
