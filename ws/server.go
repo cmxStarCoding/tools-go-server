@@ -70,6 +70,7 @@ func WsHandler(c *gin.Context) {
 	}
 }
 
+// 关闭链接
 func CloseConn(conn *websocket.Conn) {
 	ClientsMu.Lock()
 	defer ClientsMu.Unlock()
