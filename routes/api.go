@@ -9,9 +9,6 @@ import (
 
 // SetupRoutes 设置API路由
 func SetupRoutes(r *gin.Engine) {
-	//websocket
-	//r.GET("/ws", controllers.WebsocketController{}.MyWs)
-
 	apiV1NoNeedLogin := r.Group("/api/v1")
 	{
 		//贴图回调
