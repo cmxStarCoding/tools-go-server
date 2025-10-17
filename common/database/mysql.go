@@ -1,7 +1,6 @@
 package database
 
 import (
-	"fmt"
 	"github.com/spf13/viper"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -43,16 +42,18 @@ func InitDB() {
 		},
 	})
 	if connectorErr != nil {
-		log.Fatalf("Failed to connect to database: %s", fmt.Sprintf("%v", connectorErr))
+		log.Println("❌数据库链接失败", connectorErr)
 	}
 
 	// 设置连接池配置（可选）
 	sqlDB, err := DB.DB()
 	if err != nil {
-		log.Fatalf("Failed to get database connection: ", fmt.Sprintf("%v", connectorErr.Error()))
+		log.Println("❌设置数据库链接失败", err)
 	}
+	log.Println("✅ 数据库链接成功")
 
 	// 设置连接池大小等配置（根据实际情况进行调整）
 	sqlDB.SetMaxIdleConns(10)
 	sqlDB.SetMaxOpenConns(100)
+
 }

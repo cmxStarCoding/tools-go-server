@@ -34,8 +34,8 @@ func InitClient() {
 	// 检查连接是否成功
 	pong, err := RedisClient.Ping().Result()
 	if err != nil {
-		log.Fatalln("Failed to connect to Redis:", err)
+		log.Fatalln("❌Redis链接失败", err)
 	} else {
-		log.Println("Connected to Redis:", pong)
+		log.Println("✅ Redis链接成功", pong)
 	}
 }

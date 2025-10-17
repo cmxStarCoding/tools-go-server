@@ -1,8 +1,8 @@
 package cron
 
 import (
-	"fmt"
 	"github.com/robfig/cron/v3"
+	"log"
 )
 
 // RegisterCron 分钟级别的定时任务，最小到分钟级别
@@ -33,9 +33,11 @@ func RegisterCron() {
 	//})
 
 	// 输出日志，确保 cron 任务被注册
-	fmt.Println("Cron tasks registered")
+	//fmt.Println("Cron tasks registered")
 	// 启动 cron
 	c.Start()
+	log.Println("✅ 分钟级定时器启动成功")
+
 }
 
 // RegisterSecondCron 秒级别的定时任务，最小到秒级
@@ -46,4 +48,7 @@ func RegisterSecondCron() {
 
 	})
 	s.Start()
+
+	log.Println("✅ 秒级定时器启动成功")
+
 }

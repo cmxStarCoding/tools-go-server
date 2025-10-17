@@ -2,8 +2,8 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"github.com/gin-gonic/gin"
-	"journey/cmd"
 	"journey/common/cache"
 	"journey/common/database"
 	"journey/common/middleware"
@@ -38,7 +38,7 @@ func main() {
 	//秒级定时器
 	cron.RegisterSecondCron()
 	//cmd script
-	cmd.InitCmd()
+	//cmd.InitCmd()
 	// 初始化redis链接
 	cache.InitClient()
 	//初始化rabbitmq链接
@@ -50,5 +50,10 @@ func main() {
 	//静态资源配置
 	r.Static("/static", "../static")
 	// 启动服务
-	r.Run(":8083")
+	err := r.Run(":8083")
+	if err != nil {
+		fmt.Println("❌服务启动失败", err)
+		return
+	}
+
 }
