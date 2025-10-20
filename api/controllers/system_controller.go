@@ -21,34 +21,17 @@ func (c *SystemController) FeedBack(ctx *gin.Context) {
 }
 
 func (c SystemController) SystemUpdateLog(ctx *gin.Context) {
-
-	request, err := validator.ValidateGetUpdateLogRequest(ctx)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-	list, listErr := services.SystemService{}.SystemUpdateLog(request)
-	if listErr != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": listErr.Error()})
-		return
-	}
-	// 返回JSON数据
-	ctx.JSON(200, list)
+	HandleRequest(ctx,
+		validator.ValidateGetUpdateLogRequest,
+		services.SystemService{}.SystemUpdateLog,
+	)
 }
 
 func (c SystemController) CheckSystemUpdate(ctx *gin.Context) {
-	request, err := validator.ValidateCheckSystemUpdateRequest(ctx)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-	list, listErr := services.SystemService{}.CheckSystemUpdate(request)
-	if listErr != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": listErr.Error()})
-		return
-	}
-	// 返回JSON数据
-	ctx.JSON(200, list)
+	HandleRequest(ctx,
+		validator.ValidateCheckSystemUpdateRequest,
+		services.SystemService{}.CheckSystemUpdate,
+	)
 }
 
 func (c SystemController) CurrentLatestVersion(ctx *gin.Context) {
