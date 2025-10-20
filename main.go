@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"journey/cmd"
 	"journey/common/cache"
 	"journey/common/database"
 	"journey/common/middleware"
@@ -38,7 +39,7 @@ func main() {
 	//秒级定时器
 	cron.RegisterSecondCron()
 	//cmd script
-	//cmd.InitCmd()
+	cmd.InitCmd()
 	// 初始化redis链接
 	cache.InitClient()
 	//初始化rabbitmq链接

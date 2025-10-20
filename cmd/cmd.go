@@ -8,8 +8,8 @@ import (
 
 func InitCmd() {
 	app := &cli.App{
-		Name:  "mycli",                             // 设置命令行应用的名称
-		Usage: "A simple command-line application", // 命令行应用的描述
+		Name:  "mycli", // 设置命令行应用的名称
+		Usage: "这是脚本",  // 命令行应用的描述
 		Commands: []*cli.Command{
 			{
 				Name:    "greet",                 // 子命令名称
@@ -31,8 +31,8 @@ func InitCmd() {
 				},
 			},
 			{
-				Name:  "sum",             // 另一个子命令
-				Usage: "Sum two numbers", // 子命令描述
+				Name:  "test",        // 另一个子命令
+				Usage: "这里可以写一些测试逻辑", // 子命令描述
 				Flags: []cli.Flag{
 					&cli.IntFlag{
 						Name:     "a", // 第一个数字
