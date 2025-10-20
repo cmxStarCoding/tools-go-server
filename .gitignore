@@ -9,4 +9,5 @@ bin/app
 bin/*
 *.log
 journey
+log/*
 
