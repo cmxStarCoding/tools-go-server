@@ -13,6 +13,6 @@ type GetCategoryListRequest struct {
 
 // ValidateGetCategoryList 调用泛型通用函数
 func ValidateGetCategoryList(c *gin.Context) (*GetCategoryListRequest, error) {
-	//调用泛型函数时可以显式指定类型参数
+	//调用泛型函数时可以显式指定泛型类型参数
 	return ValidateRequest[GetCategoryListRequest](c)
 }

@@ -17,7 +17,7 @@ type EditProfileRequest struct {
 	AvatarUrl string `json:"avatar_url" form:"avatar_url" validate:"checkAvatarUrl" comment:"头像"`
 }
 
-func ValidEditRequest(c *gin.Context) (*EditProfileRequest, error) {
+func ValidEditProfileRequest(c *gin.Context) (*EditProfileRequest, error) {
 	var request EditProfileRequest
 	if err := c.ShouldBindWith(&request, binding.JSON); err != nil {
 		// 参数验证失败

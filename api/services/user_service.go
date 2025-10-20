@@ -9,6 +9,7 @@ import (
 	"journey/api/validator"
 	"journey/common/cache"
 	"journey/common/database"
+	"journey/common/middleware"
 	"journey/common/utils"
 	"journey/models"
 	"log"
@@ -48,7 +49,7 @@ func (s UserService) UserLogout(ctx *gin.Context) (string, error) {
 	return "ok", nil
 }
 
-func (s UserService) UserLogin(account string, password string) (*models.UserModel, error) {
+func (s UserService) UserLogin(account string, password string) (map[string]interface{}, error) {
 	// 获取数据库连接
 	db := database.DB
 	userInfo := &models.UserModel{}
@@ -56,10 +57,17 @@ func (s UserService) UserLogin(account string, password string) (*models.UserMod
 	if result.Error != nil && errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		return nil, AccountOrPasswordValid
 	}
-	return userInfo, nil
+
+	jwtToken, _ := middleware.GenerateToken(userInfo.ID, userInfo.Nickname)
+
+	var returnData = make(map[string]interface{})
+	returnData["user_info"] = userInfo
+	returnData["jtw_token"] = jwtToken
+	returnData["token_expire"] = time.Now().Add(180 * 24 * time.Hour)
+	return returnData, nil
 }
 
-func (s UserService) UserRegister(requestData *validator.RegisterRequest) (*models.UserModel, error) {
+func (s UserService) UserRegister(requestData *validator.RegisterRequest) (map[string]interface{}, error) {
 	// 获取数据库连接
 	db := database.DB
 	userFullInfo := &models.UserFullModel{}
@@ -80,7 +88,13 @@ func (s UserService) UserRegister(requestData *validator.RegisterRequest) (*mode
 	}
 	userInfo := &models.UserModel{}
 	db.Where("account = ?", requestData.Account).First(userInfo)
-	return userInfo, nil
+
+	var returnData = make(map[string]interface{})
+	jwtToken, _ := middleware.GenerateToken(userInfo.ID, userInfo.Nickname)
+	returnData["user_info"] = userInfo
+	returnData["jwt_token"] = jwtToken
+	returnData["expire"] = time.Now().Add(7 * 24 * time.Hour)
+	return returnData, nil
 }
 
 func (s UserService) EditUserProfile(requestData *validator.EditProfileRequest, userId uint) (*models.UserModel, error) {
