@@ -10,4 +10,5 @@ bin/*
 *.log
 journey
 log/*
+deploy/components/*
 
