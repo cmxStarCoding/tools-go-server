@@ -1,9 +1,7 @@
 package validator
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
-	"gopkg.in/go-playground/validator.v9"
 )
 
 type GetUpdateLogRequest struct {
@@ -14,27 +12,6 @@ type GetUpdateLogRequest struct {
 }
 
 func ValidateGetUpdateLogRequest(c *gin.Context) (*GetUpdateLogRequest, error) {
-	var request GetUpdateLogRequest
-	if err := c.ShouldBindQuery(&request); err != nil {
-		// 参数验证失败
-		errs, ok := err.(validator.ValidationErrors)
-		if !ok {
-			return nil, fmt.Errorf(err.Error())
-		}
-		var sliceErrs []string
-		for _, e := range errs {
-			//e.Field()
-			sliceErrs = append(sliceErrs, e.Translate(Trans))
-		}
-		return nil, fmt.Errorf(sliceErrs[0])
-	}
-
-	if request.Page == 0 {
-		request.Page = 1
-	}
-	if request.Limit == 0 {
-		request.Limit = 10
-	}
-
-	return &request, nil
+	//调用泛型函数时可以显式指定泛型类型参数
+	return ValidateRequest[GetUpdateLogRequest](c)
 }

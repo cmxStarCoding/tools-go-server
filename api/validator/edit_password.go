@@ -3,10 +3,7 @@
 package validator
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/binding"
-	"gopkg.in/go-playground/validator.v9"
 )
 
 type EditPasswordRequest struct {
@@ -18,20 +15,6 @@ type EditPasswordRequest struct {
 }
 
 func ValidEditPasswordRequest(c *gin.Context) (*EditPasswordRequest, error) {
-	var request EditPasswordRequest
-	if err := c.ShouldBindWith(&request, binding.JSON); err != nil {
-		// 参数验证失败
-		errs, ok := err.(validator.ValidationErrors)
-		if !ok {
-			return nil, fmt.Errorf(err.Error())
-		}
-		var sliceErrs []string
-		for _, e := range errs {
-			//e.Field()
-			sliceErrs = append(sliceErrs, e.Translate(Trans))
-		}
-		return nil, fmt.Errorf(sliceErrs[0])
-	}
-
-	return &request, nil
+	//调用泛型函数时可以显式指定泛型类型参数
+	return ValidateRequest[EditPasswordRequest](c)
 }
