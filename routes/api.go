@@ -1,10 +1,11 @@
 package routes
 
 import (
-	"github.com/gin-gonic/gin"
 	"journey/api/controllers"
 	"journey/common/middleware"
 	"journey/ws"
+
+	"github.com/gin-gonic/gin"
 )
 
 // SetupRoutes 设置API路由
