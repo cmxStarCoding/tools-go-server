@@ -13,6 +13,7 @@ import (
 	"journey/mq/mqlogic"
 	"journey/mq/rabbitmq"
 	"journey/routes"
+	"os"
 )
 
 func main() {
@@ -20,6 +21,13 @@ func main() {
 	flag.StringVar(&env, "env", "local", "设置环境")
 	// 解析启动的命令行参数
 	flag.Parse()
+
+	// 如果有 CLI 参数，则优先执行 CLI
+	if len(os.Args) > 1 {
+		cmd.InitCmd()
+		return
+	}
+
 	if env == "prod" {
 		gin.SetMode(gin.ReleaseMode)
 	}
@@ -38,8 +46,7 @@ func main() {
 	cron.RegisterCron()
 	//秒级定时器
 	cron.RegisterSecondCron()
-	//cmd script
-	cmd.InitCmd()
+
 	// 初始化redis链接
 	cache.InitClient()
 	//初始化rabbitmq链接

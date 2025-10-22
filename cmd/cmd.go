@@ -24,6 +24,7 @@ func InitCmd() {
 					},
 				},
 				Action: func(c *cli.Context) error {
+					// 用法 ./journey greet --name "Cui"
 					// 获取用户输入的 name 参数
 					name := c.String("name")
 					fmt.Printf("Hello, %s!\n", name)
