@@ -1,9 +1,11 @@
 package controllers
 
 import (
-	"github.com/gin-gonic/gin"
 	"journey/api/services"
 	"journey/api/validator"
+	"journey/models"
+
+	"github.com/gin-gonic/gin"
 )
 
 type CategoryController struct{}
@@ -12,7 +14,9 @@ type CategoryController struct{}
 func (c *CategoryController) GetCategoryList(ctx *gin.Context) {
 	HandleRequest(ctx,
 		validator.ValidateGetCategoryList,
-		services.CategoryService{}.GetCategoryList,
+		func(ctx *gin.Context, req *validator.GetCategoryListRequest) ([]models.CategoryModel, error) {
+			return services.CategoryService{}.GetCategoryList(req)
+		},
 	)
 }
 
@@ -20,6 +24,8 @@ func (c *CategoryController) GetCategoryList(ctx *gin.Context) {
 func (c *CategoryController) GetCategoryToolsList(ctx *gin.Context) {
 	HandleRequest(ctx,
 		validator.ValidateGetCategoryToolsRequest,
-		services.CategoryService{}.GetCategoryToolsList,
+		func(ctx *gin.Context, req *validator.GetCategoryToolsRequest) ([]models.CategoryModel, error) {
+			return services.CategoryService{}.GetCategoryToolsList(req)
+		},
 	)
 }

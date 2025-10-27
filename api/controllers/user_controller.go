@@ -3,11 +3,12 @@
 package controllers
 
 import (
-	"github.com/gin-gonic/gin"
 	"journey/api/services"
 	"journey/api/validator"
 	"journey/models"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 	//"journey/api/utils"
 )
 
@@ -18,7 +19,7 @@ type UserController struct{}
 func (c UserController) UserLogin(ctx *gin.Context) {
 	HandleRequest(ctx,
 		validator.ValidateUserLogin,
-		func(req *validator.LoginRequest) (map[string]interface{}, error) {
+		func(ctx *gin.Context, req *validator.LoginRequest) (map[string]interface{}, error) {
 			return services.UserService{}.UserLogin(req.Account, req.Password)
 		},
 	)
@@ -27,7 +28,9 @@ func (c UserController) UserLogin(ctx *gin.Context) {
 func (c UserController) UserRegister(ctx *gin.Context) {
 	HandleRequest(ctx,
 		validator.ValidateRegisterRequest,
-		services.UserService{}.UserRegister,
+		func(ctx *gin.Context, req *validator.RegisterRequest) (map[string]interface{}, error) {
+			return services.UserService{}.UserLogin(req.Account, req.Password)
+		},
 	)
 }
 
@@ -55,7 +58,7 @@ func (c UserController) GetUserByID(ctx *gin.Context) {
 func (c UserController) EditUserProfile(ctx *gin.Context) {
 	HandleRequest(ctx,
 		validator.ValidEditProfileRequest,
-		func(req *validator.EditProfileRequest) (*models.UserModel, error) {
+		func(ctx *gin.Context, req *validator.EditProfileRequest) (*models.UserModel, error) {
 			userId := ctx.Value("UserId").(uint)
 			return services.UserService{}.EditUserProfile(req, userId)
 		},
@@ -65,7 +68,7 @@ func (c UserController) EditUserProfile(ctx *gin.Context) {
 func (c UserController) EditUserPassword(ctx *gin.Context) {
 	HandleRequest(ctx,
 		validator.ValidEditPasswordRequest,
-		func(req *validator.EditPasswordRequest) (string, error) {
+		func(ctx *gin.Context, req *validator.EditPasswordRequest) (string, error) {
 			userId := ctx.Value("UserId").(uint)
 			return services.UserService{}.EditPassword(req, userId)
 		},
@@ -75,13 +78,17 @@ func (c UserController) EditUserPassword(ctx *gin.Context) {
 func (c UserController) SendEmailCode(ctx *gin.Context) {
 	HandleRequest(ctx,
 		validator.ValidSendEmailCodeRequest,
-		services.UserService{}.SendEmailCode,
+		func(ctx *gin.Context, req *validator.SendEmailCodeRequest) (string, error) {
+			return services.UserService{}.SendEmailCode(req)
+		},
 	)
 }
 
 func (c UserController) ForgetPasswordReset(ctx *gin.Context) {
 	HandleRequest(ctx,
 		validator.ValidForgetPasswordResetRequest,
-		services.UserService{}.ForgetPasswordReset,
+		func(ctx *gin.Context, req *validator.ForgetPasswordResetRequest) (string, error) {
+			return services.UserService{}.ForgetPasswordReset(req)
+		},
 	)
 }

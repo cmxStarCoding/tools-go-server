@@ -35,4 +35,7 @@ func (s CategoryService) GetCategoryToolsList(requestData *validator.GetCategory
 	commonQuery.Limit(int(requestData.Limit)).Offset((int(requestData.Page) - 1) * int(requestData.Limit)).
 		Preload("Tools").Find(&categoryList)
 	return categoryList, nil
+
+	//var categoryList []model.TCategory
+	//q := query.Use(database.DB).TCategory.WithContext(ctx).
 }
