@@ -3,20 +3,22 @@ package services
 import (
 	"errors"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/spf13/viper"
-	"gorm.io/gorm"
 	"journey/api/validator"
 	"journey/common/cache"
 	"journey/common/database"
 	"journey/common/middleware"
 	"journey/common/utils"
+	"journey/dao/query"
 	"journey/models"
 	"log"
 	"math/rand"
 	"net/smtp"
 	"strconv"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
+	"gorm.io/gorm"
 )
 
 var (
@@ -49,16 +51,20 @@ func (s UserService) UserLogout(ctx *gin.Context) (string, error) {
 	return "ok", nil
 }
 
-func (s UserService) UserLogin(account string, password string) (map[string]interface{}, error) {
+func (s UserService) UserLogin(ctx *gin.Context, account string, password string) (map[string]interface{}, error) {
 	// 获取数据库连接
-	db := database.DB
-	userInfo := &models.UserModel{}
-	result := db.Where("account = ?", account).Where("password = ?", utils.Md5Hash(password)).First(userInfo)
-	if result.Error != nil && errors.Is(result.Error, gorm.ErrRecordNotFound) {
+	db := query.Use(database.DB)
+
+	userInfo, err := db.TUser.WithContext(ctx).Where(
+		db.TUser.Account.Eq(account),
+		db.TUser.Password.Eq(utils.Md5Hash(password)),
+	).First()
+
+	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, AccountOrPasswordValid
 	}
 
-	jwtToken, _ := middleware.GenerateToken(userInfo.ID, userInfo.Nickname)
+	jwtToken, _ := middleware.GenerateToken(uint(userInfo.ID), userInfo.Nickname)
 
 	var returnData = make(map[string]interface{})
 	returnData["user_info"] = userInfo

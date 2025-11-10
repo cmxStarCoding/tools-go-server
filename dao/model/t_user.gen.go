@@ -7,6 +7,7 @@ package model
 import (
 	"time"
 
+	"github.com/goccy/go-json"
 	"gorm.io/gorm"
 )
 
@@ -25,6 +26,40 @@ type TUser struct {
 	CreatedAt     time.Time      `gorm:"column:created_at;comment:创建时间" json:"created_at"`               // 创建时间
 	UpdatedAt     time.Time      `gorm:"column:updated_at;comment:更新时间" json:"updated_at"`               // 更新时间
 	DeletedAt     gorm.DeletedAt `gorm:"column:deleted_at;comment:删除时间" json:"deleted_at"`               // 删除时间
+}
+
+// MarshalJSON 自定义时间格式输出（Y-m-d H:i:s）
+func (u TUser) MarshalJSON() ([]byte, error) {
+	type Alias TUser
+	return json.Marshal(&struct {
+		VipExpireTime string `json:"vip_expire_time"`
+		CreatedAt     string `json:"created_at"`
+		UpdatedAt     string `json:"updated_at"`
+		DeletedAt     string `json:"deleted_at"`
+		*Alias
+	}{
+		VipExpireTime: formatTime(u.VipExpireTime),
+		CreatedAt:     formatTime(u.CreatedAt),
+		UpdatedAt:     formatTime(u.UpdatedAt),
+		DeletedAt:     formatDeletedAt(u.DeletedAt),
+		Alias:         (*Alias)(&u),
+	})
+}
+
+// formatTime 格式化普通时间
+func formatTime(t time.Time) string {
+	if t.IsZero() {
+		return ""
+	}
+	return t.Format("2006-01-02 15:04:05")
+}
+
+// formatDeletedAt 格式化 gorm.DeletedAt
+func formatDeletedAt(d gorm.DeletedAt) string {
+	if d.Valid {
+		return d.Time.Format("2006-01-02 15:04:05")
+	}
+	return ""
 }
 
 // TableName TUser's table name

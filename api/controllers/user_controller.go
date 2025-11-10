@@ -20,7 +20,7 @@ func (c UserController) UserLogin(ctx *gin.Context) {
 	HandleRequest(ctx,
 		validator.ValidateUserLogin,
 		func(ctx *gin.Context, req *validator.LoginRequest) (map[string]interface{}, error) {
-			return services.UserService{}.UserLogin(req.Account, req.Password)
+			return services.UserService{}.UserLogin(ctx, req.Account, req.Password)
 		},
 	)
 }
@@ -29,7 +29,7 @@ func (c UserController) UserRegister(ctx *gin.Context) {
 	HandleRequest(ctx,
 		validator.ValidateRegisterRequest,
 		func(ctx *gin.Context, req *validator.RegisterRequest) (map[string]interface{}, error) {
-			return services.UserService{}.UserLogin(req.Account, req.Password)
+			return services.UserService{}.UserLogin(ctx, req.Account, req.Password)
 		},
 	)
 }

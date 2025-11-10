@@ -1,9 +1,7 @@
 package main
 
 import (
-	"flag"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"journey/cmd"
 	"journey/common/cache"
 	"journey/common/database"
@@ -14,20 +12,18 @@ import (
 	"journey/mq/rabbitmq"
 	"journey/routes"
 	"os"
+
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	var env string
-	flag.StringVar(&env, "env", "local", "设置环境")
-	// 解析启动的命令行参数
-	flag.Parse()
-
 	// 如果有 CLI 参数，则优先执行 CLI
 	if len(os.Args) > 1 {
 		cmd.InitCmd()
 		return
 	}
-
+	var env string
+	env = os.Getenv("ENV")
 	if env == "prod" {
 		gin.SetMode(gin.ReleaseMode)
 	}

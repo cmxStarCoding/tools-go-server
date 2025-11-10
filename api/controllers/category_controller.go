@@ -25,7 +25,7 @@ func (c *CategoryController) GetCategoryToolsList(ctx *gin.Context) {
 	HandleRequest(ctx,
 		validator.ValidateGetCategoryToolsRequest,
 		func(ctx *gin.Context, req *validator.GetCategoryToolsRequest) ([]models.CategoryModel, error) {
-			return services.CategoryService{}.GetCategoryToolsList(req)
+			return services.CategoryService{}.GetCategoryToolsList(ctx, req)
 		},
 	)
 }

@@ -6,6 +6,7 @@ import (
 	"journey/common/database"
 	"journey/models"
 
+	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
@@ -20,7 +21,7 @@ func (s CategoryService) GetCategoryList(requestData *validator.GetCategoryListR
 	return categoryList, nil
 }
 
-func (s CategoryService) GetCategoryToolsList(requestData *validator.GetCategoryToolsRequest) ([]models.CategoryModel, error) {
+func (s CategoryService) GetCategoryToolsList(ctx *gin.Context, requestData *validator.GetCategoryToolsRequest) ([]models.CategoryModel, error) {
 	db := database.DB
 	var categoryList []models.CategoryModel
 
@@ -37,5 +38,5 @@ func (s CategoryService) GetCategoryToolsList(requestData *validator.GetCategory
 	return categoryList, nil
 
 	//var categoryList []model.TCategory
-	//q := query.Use(database.DB).TCategory.WithContext(ctx).
+	//q := query.Use(database.DB).TCategory.WithContext(ctx)
 }
