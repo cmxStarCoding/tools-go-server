@@ -1,6 +1,7 @@
 package services
 
 import (
+	"database/sql"
 	"errors"
 	"fmt"
 	"journey/api/validator"
@@ -8,6 +9,7 @@ import (
 	"journey/common/database"
 	"journey/common/middleware"
 	"journey/common/utils"
+	"journey/dao/model"
 	"journey/dao/query"
 	"journey/models"
 	"log"
@@ -73,30 +75,31 @@ func (s UserService) UserLogin(ctx *gin.Context, account string, password string
 	return returnData, nil
 }
 
-func (s UserService) UserRegister(requestData *validator.RegisterRequest) (map[string]interface{}, error) {
+func (s UserService) UserRegister(ctx *gin.Context, requestData *validator.RegisterRequest) (map[string]interface{}, error) {
 	// 获取数据库连接
-	db := database.DB
-	userFullInfo := &models.UserFullModel{}
-	err := db.Where("account = ?", requestData.Account).First(userFullInfo).Error
-	viper.SetConfigFile("../../../common/config.ini")
-	viper.ReadInConfig()
+	db := query.Use(database.DB)
+	_, err := db.TUser.WithContext(ctx).Where(db.TUser.Account.Eq(requestData.Account)).First()
 	if err == nil {
 		return nil, fmt.Errorf("该账号已被注册")
 	}
-	userFullInfo.Account = requestData.Account
-	userFullInfo.Password = utils.Md5Hash(requestData.Password)
-	userFullInfo.Nickname = requestData.Account
-	userFullInfo.AvatarUrl = viper.GetString("app.domain") + "/static/avatar1.png"
 
-	err = database.DB.Create(userFullInfo).Error
-	if err != nil {
-		return nil, err
+	viper.SetConfigFile("./common/config.ini")
+	viper.ReadInConfig()
+	createErr := db.TUser.WithContext(ctx).Create(&model.TUser{
+		Account:       requestData.Account,
+		Password:      utils.Md5Hash(requestData.Password),
+		Nickname:      requestData.Account,
+		AvatarURL:     viper.GetString("app.domain") + "/static/avatar1.png",
+		VipExpireTime: sql.NullTime{Valid: false}, //,
+	})
+	if createErr != nil {
+		return nil, fmt.Errorf("注册失败" + createErr.Error())
 	}
-	userInfo := &models.UserModel{}
-	db.Where("account = ?", requestData.Account).First(userInfo)
+
+	userInfo, _ := db.TUser.WithContext(ctx).Where(db.TUser.Account.Eq(requestData.Account)).First()
 
 	var returnData = make(map[string]interface{})
-	jwtToken, _ := middleware.GenerateToken(userInfo.ID, userInfo.Nickname)
+	jwtToken, _ := middleware.GenerateToken(uint(userInfo.ID), userInfo.Nickname)
 	returnData["user_info"] = userInfo
 	returnData["jwt_token"] = jwtToken
 	returnData["expire"] = time.Now().Add(7 * 24 * time.Hour)

@@ -5,6 +5,7 @@
 package model
 
 import (
+	"database/sql"
 	"time"
 
 	"github.com/goccy/go-json"
@@ -22,7 +23,7 @@ type TUser struct {
 	Nickname      string         `gorm:"column:nickname;not null;comment:昵称" json:"nickname"`            // 昵称
 	AvatarURL     string         `gorm:"column:avatar_url;not null;comment:头像" json:"avatar_url"`        // 头像
 	VipLevelID    int32          `gorm:"column:vip_level_id;not null;comment:会员级别" json:"vip_level_id"`  // 会员级别
-	VipExpireTime time.Time      `gorm:"column:vip_expire_time;comment:vip到期时间" json:"vip_expire_time"`  // vip到期时间
+	VipExpireTime sql.NullTime   `gorm:"column:vip_expire_time;comment:vip到期时间" json:"vip_expire_time"`  // vip到期时间
 	CreatedAt     time.Time      `gorm:"column:created_at;comment:创建时间" json:"created_at"`               // 创建时间
 	UpdatedAt     time.Time      `gorm:"column:updated_at;comment:更新时间" json:"updated_at"`               // 更新时间
 	DeletedAt     gorm.DeletedAt `gorm:"column:deleted_at;comment:删除时间" json:"deleted_at"`               // 删除时间
@@ -38,7 +39,7 @@ func (u TUser) MarshalJSON() ([]byte, error) {
 		DeletedAt     string `json:"deleted_at"`
 		*Alias
 	}{
-		VipExpireTime: formatTime(u.VipExpireTime),
+		VipExpireTime: formatNullTime(u.VipExpireTime),
 		CreatedAt:     formatTime(u.CreatedAt),
 		UpdatedAt:     formatTime(u.UpdatedAt),
 		DeletedAt:     formatDeletedAt(u.DeletedAt),
@@ -52,6 +53,13 @@ func formatTime(t time.Time) string {
 		return ""
 	}
 	return t.Format("2006-01-02 15:04:05")
+}
+
+func formatNullTime(t sql.NullTime) string {
+	if t.Valid {
+		return t.Time.Format("2006-01-02 15:04:05")
+	}
+	return ""
 }
 
 // formatDeletedAt 格式化 gorm.DeletedAt
