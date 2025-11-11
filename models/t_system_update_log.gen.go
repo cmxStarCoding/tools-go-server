@@ -7,8 +7,8 @@ import (
 	"gorm.io/gorm"
 )
 
-// TSystemUpdateLogModel 系统更新日志模型
-type TSystemUpdateLogModel struct {
+// TSystemUpdateLog 系统更新日志模型
+type TSystemUpdateLog struct {
 	ID                uint           `gorm:"column:id" json:"id"`
 	Version           string         `gorm:"column:version" json:"version" `
 	VersionName       string         `gorm:"column:version_name" json:"version_name" `
@@ -22,8 +22,8 @@ type TSystemUpdateLogModel struct {
 }
 
 // MarshalJSON 自定义时间格式输出（Y-m-d H:i:s）
-func (u TSystemUpdateLogModel) MarshalJSON() ([]byte, error) {
-	type Alias TSystemUpdateLogModel
+func (u TSystemUpdateLog) MarshalJSON() ([]byte, error) {
+	type Alias TSystemUpdateLog
 	return json.Marshal(&struct {
 		VipExpireTime string `json:"vip_expire_time"`
 		CreatedAt     string `json:"created_at"`
@@ -37,6 +37,6 @@ func (u TSystemUpdateLogModel) MarshalJSON() ([]byte, error) {
 		Alias:     (*Alias)(&u),
 	})
 }
-func (TSystemUpdateLogModel) TableName() string {
+func (TSystemUpdateLog) TableName() string {
 	return "t_system_update_log"
 }

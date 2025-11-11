@@ -12,7 +12,7 @@ const (
 	PicPasteMark = "pic_paste_mark"
 )
 
-type TToolsModel struct {
+type TTools struct {
 	ID          uint           `gorm:"column:id" json:"id"`
 	Mark        string         `gorm:"column:mark" json:"mark"`
 	Name        string         `gorm:"column:name" json:"name"`
@@ -27,8 +27,8 @@ type TToolsModel struct {
 }
 
 // MarshalJSON 自定义时间格式输出（Y-m-d H:i:s）
-func (u TToolsModel) MarshalJSON() ([]byte, error) {
-	type Alias TToolsModel
+func (u TTools) MarshalJSON() ([]byte, error) {
+	type Alias TTools
 	return json.Marshal(&struct {
 		VipExpireTime string `json:"vip_expire_time"`
 		CreatedAt     string `json:"created_at"`
@@ -43,6 +43,6 @@ func (u TToolsModel) MarshalJSON() ([]byte, error) {
 	})
 }
 
-func (TToolsModel) TableName() string {
+func (TTools) TableName() string {
 	return "t_tools"
 }

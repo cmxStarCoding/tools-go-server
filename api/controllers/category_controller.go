@@ -14,7 +14,7 @@ type CategoryController struct{}
 func (c *CategoryController) GetCategoryList(ctx *gin.Context) {
 	HandleRequest(ctx,
 		validator.ValidateGetCategoryList,
-		func(ctx *gin.Context, req *validator.GetCategoryListRequest) ([]models.CategoryModel, error) {
+		func(ctx *gin.Context, req *validator.GetCategoryListRequest) ([]models.Category, error) {
 			return services.CategoryService{}.GetCategoryList(req)
 		},
 	)
@@ -24,7 +24,7 @@ func (c *CategoryController) GetCategoryList(ctx *gin.Context) {
 func (c *CategoryController) GetCategoryToolsList(ctx *gin.Context) {
 	HandleRequest(ctx,
 		validator.ValidateGetCategoryToolsRequest,
-		func(ctx *gin.Context, req *validator.GetCategoryToolsRequest) ([]models.CategoryModel, error) {
+		func(ctx *gin.Context, req *validator.GetCategoryToolsRequest) ([]models.Category, error) {
 			return services.CategoryService{}.GetCategoryToolsList(ctx, req)
 		},
 	)

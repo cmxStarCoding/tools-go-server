@@ -9,13 +9,13 @@ import (
 // AsService 测试
 type AsService struct{}
 
-func (s AsService) GetCategoryList(requestData *validator.GetCategoryListRequest) (map[int]models.CategoryModel, error) {
+func (s AsService) GetCategoryList(requestData *validator.GetCategoryListRequest) (map[int]models.Category, error) {
 	db := database.DB
-	var categoryList []models.CategoryModel
+	var categoryList []models.Category
 
 	db.Limit(int(requestData.Limit)).Offset((int(requestData.Page) - 1) * int(requestData.Limit)).Find(&categoryList)
 
-	categoryMap := make(map[int]models.CategoryModel)
+	categoryMap := make(map[int]models.Category)
 
 	for _, v2 := range categoryList {
 		if int(v2.Pid) == 0 {

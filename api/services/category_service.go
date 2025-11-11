@@ -13,19 +13,19 @@ import (
 // CategoryService 用户服务
 type CategoryService struct{}
 
-func (s CategoryService) GetCategoryList(requestData *validator.GetCategoryListRequest) ([]models.CategoryModel, error) {
+func (s CategoryService) GetCategoryList(requestData *validator.GetCategoryListRequest) ([]models.Category, error) {
 	db := database.DB
-	var categoryList []models.CategoryModel
+	var categoryList []models.Category
 	db.Where("pid = 0").Limit(int(requestData.Limit)).Offset((int(requestData.Page) - 1) * int(requestData.Limit)).
 		Preload("Children").Find(&categoryList)
 	return categoryList, nil
 }
 
-func (s CategoryService) GetCategoryToolsList(ctx *gin.Context, requestData *validator.GetCategoryToolsRequest) ([]models.CategoryModel, error) {
+func (s CategoryService) GetCategoryToolsList(ctx *gin.Context, requestData *validator.GetCategoryToolsRequest) ([]models.Category, error) {
 	db := database.DB
-	var categoryList []models.CategoryModel
+	var categoryList []models.Category
 
-	commonQuery := db.Model(&models.CategoryModel{}).
+	commonQuery := db.Model(&models.Category{}).
 		Where("pid = 0")
 
 	var count int64

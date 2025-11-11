@@ -38,13 +38,12 @@ func main() {
 	utils.SetupLogger()
 	// 初始化数据库连接
 	database.InitDB()
+	// 初始化redis链接
+	cache.InitClient()
 	//分钟级定时器
 	cron.RegisterCron()
 	//秒级定时器
 	cron.RegisterSecondCron()
-
-	// 初始化redis链接
-	cache.InitClient()
 	//初始化rabbitmq链接
 	rabbitmq.InitRabbitMQ()
 	//开启消息队列任务

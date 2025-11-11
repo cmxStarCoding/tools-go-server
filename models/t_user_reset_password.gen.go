@@ -7,7 +7,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type TUserResetPasswordModel struct {
+type TUserResetPassword struct {
 	ID        uint           `gorm:"column:id" json:"id"`
 	Account   string         `gorm:"column:account" json:"account"`
 	UseEmail  string         `gorm:"column:use_email" json:"use_email"`
@@ -17,8 +17,8 @@ type TUserResetPasswordModel struct {
 	DeletedAt gorm.DeletedAt `gorm:"column:deleted_at" json:"deleted_at"`
 }
 
-func (u TUserResetPasswordModel) MarshalJSON() ([]byte, error) {
-	type Alias TUserResetPasswordModel
+func (u TUserResetPassword) MarshalJSON() ([]byte, error) {
+	type Alias TUserResetPassword
 	return json.Marshal(&struct {
 		VipExpireTime string `json:"vip_expire_time"`
 		CreatedAt     string `json:"created_at"`
@@ -33,6 +33,6 @@ func (u TUserResetPasswordModel) MarshalJSON() ([]byte, error) {
 	})
 }
 
-func (TUserResetPasswordModel) TableName() string {
+func (TUserResetPassword) TableName() string {
 	return "t_user_reset_password"
 }

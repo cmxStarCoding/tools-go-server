@@ -7,8 +7,8 @@ import (
 	"gorm.io/gorm"
 )
 
-// TFeedbackModel 意见反馈模型
-type TFeedbackModel struct {
+// TFeedback 意见反馈模型
+type TFeedback struct {
 	ID            uint           `gorm:"column:id" json:"id"`
 	UserId        uint           `gorm:"column:user_id" json:"user_id"`
 	ContractPhone string         `gorm:"column:contract_phone" json:"contract_phone" `
@@ -18,8 +18,8 @@ type TFeedbackModel struct {
 	DeletedAt     gorm.DeletedAt `gorm:"column:deleted_at" json:"deleted_at"`
 }
 
-func (u TFeedbackModel) MarshalJSON() ([]byte, error) {
-	type Alias TFeedbackModel
+func (u TFeedback) MarshalJSON() ([]byte, error) {
+	type Alias TFeedback
 	return json.Marshal(&struct {
 		VipExpireTime string `json:"vip_expire_time"`
 		CreatedAt     string `json:"created_at"`
@@ -34,6 +34,6 @@ func (u TFeedbackModel) MarshalJSON() ([]byte, error) {
 	})
 }
 
-func (TFeedbackModel) TableName() string {
+func (TFeedback) TableName() string {
 	return "t_feedback"
 }

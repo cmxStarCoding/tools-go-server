@@ -15,7 +15,7 @@ type SystemService struct {
 
 func (s SystemService) FeedBack(requestData *validator.FeedbackRequest, UserId uint) (string, error) {
 
-	feedback := &models.TFeedbackModel{}
+	feedback := &models.TFeedback{}
 	feedback.UserId = UserId
 	feedback.Content = requestData.Content
 	feedback.ContractPhone = requestData.ContractPhone
@@ -27,10 +27,10 @@ func (s SystemService) SystemUpdateLog(requestData *validator.GetUpdateLogReques
 
 	var mapResult = make(map[string]interface{})
 
-	var sliceUpdateLog []models.TSystemUpdateLogModel
+	var sliceUpdateLog []models.TSystemUpdateLog
 
 	var total int64
-	database.DB.Model(&models.TSystemUpdateLogModel{}).Count(&total)
+	database.DB.Model(&models.TSystemUpdateLog{}).Count(&total)
 	database.DB.Limit(int(requestData.Limit)).Offset((int(requestData.Page) - 1) * int(requestData.Limit)).Find(&sliceUpdateLog)
 
 	mapResult["total"] = total
@@ -41,7 +41,7 @@ func (s SystemService) SystemUpdateLog(requestData *validator.GetUpdateLogReques
 
 func (s SystemService) CheckSystemUpdate(requestData *validator.CheckSystemUpdateRequest) (map[string]any, error) {
 
-	systemUpdate := &models.TSystemUpdateLogModel{}
+	systemUpdate := &models.TSystemUpdateLog{}
 	result := database.DB.Last(&systemUpdate)
 	if result.Error != nil && errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		return nil, fmt.Errorf("不存在版本")
@@ -60,9 +60,9 @@ func (s SystemService) CheckSystemUpdate(requestData *validator.CheckSystemUpdat
 	return returnMap, nil
 }
 
-func (s SystemService) CurrentLatestVersion() (*models.TSystemUpdateLogModel, error) {
+func (s SystemService) CurrentLatestVersion() (*models.TSystemUpdateLog, error) {
 
-	systemUpdate := &models.TSystemUpdateLogModel{}
+	systemUpdate := &models.TSystemUpdateLog{}
 	result := database.DB.Last(&systemUpdate)
 	if result.Error != nil && errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		return nil, fmt.Errorf("不存在版本")

@@ -4,8 +4,8 @@ import (
 	"gorm.io/gorm"
 )
 
-// CategoryModel TUser 用户模型
-type CategoryModel struct {
+// Category TUser 用户模型
+type Category struct {
 	ID          uint           `gorm:"column:id" json:"id"`
 	Name        string         `gorm:"column:name" json:"name"`
 	Description string         `gorm:"column:description" json:"description" `
@@ -15,10 +15,10 @@ type CategoryModel struct {
 	UpdatedAt   TimeNormal     `gorm:"column:updated_at" json:"updated_at"`
 	DeletedAt   gorm.DeletedAt `gorm:"column:deleted_at" json:"deleted_at"`
 
-	Children []CategoryModel `gorm:"foreignKey:pid" json:"children"`
-	Tools    []TToolsModel   `gorm:"foreignKey:CategoryId" json:"tools"`
+	Children []Category `gorm:"foreignKey:pid" json:"children"`
+	Tools    []TTools   `gorm:"foreignKey:CategoryId" json:"tools"`
 }
 
-func (CategoryModel) TableName() string {
+func (Category) TableName() string {
 	return "t_category"
 }

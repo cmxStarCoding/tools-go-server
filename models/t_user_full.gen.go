@@ -8,8 +8,8 @@ import (
 	"gorm.io/gorm"
 )
 
-// TUserFullModel 用户模型
-type TUserFullModel struct {
+// TUserFull 用户模型
+type TUserFull struct {
 	ID            uint           `gorm:"column:id" json:"id"`
 	Phone         string         `gorm:"column:phone" json:"phone"`
 	Account       string         `gorm:"column:account" json:"account"`
@@ -24,8 +24,8 @@ type TUserFullModel struct {
 }
 
 // MarshalJSON 自定义时间格式输出（Y-m-d H:i:s）
-func (u TUserFullModel) MarshalJSON() ([]byte, error) {
-	type Alias TUserFullModel
+func (u TUserFull) MarshalJSON() ([]byte, error) {
+	type Alias TUserFull
 	return json.Marshal(&struct {
 		VipExpireTime string `json:"vip_expire_time"`
 		CreatedAt     string `json:"created_at"`
@@ -41,6 +41,6 @@ func (u TUserFullModel) MarshalJSON() ([]byte, error) {
 	})
 }
 
-func (TUserFullModel) TableName() string {
+func (TUserFull) TableName() string {
 	return "t_user"
 }
