@@ -28,6 +28,11 @@ func (s CategoryService) GetCategoryToolsList(ctx *gin.Context, requestData *val
 	commonQuery := db.Model(&models.CategoryModel{}).
 		Where("pid = 0")
 
+	var count int64
+
+	countSQL := commonQuery.Session(&gorm.Session{DryRun: true}).Count(&count).Statement.SQL.String()
+	fmt.Println("统计SQL:", countSQL)
+
 	sqlStr := commonQuery.ToSQL(func(tx *gorm.DB) *gorm.DB {
 		return tx.Find(&categoryList)
 	})

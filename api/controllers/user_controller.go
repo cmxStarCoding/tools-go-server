@@ -58,7 +58,7 @@ func (c UserController) GetUserByID(ctx *gin.Context) {
 func (c UserController) EditUserProfile(ctx *gin.Context) {
 	HandleRequest(ctx,
 		validator.ValidEditProfileRequest,
-		func(ctx *gin.Context, req *validator.EditProfileRequest) (*models.UserModel, error) {
+		func(ctx *gin.Context, req *validator.EditProfileRequest) (*models.TUser, error) {
 			userId := ctx.Value("UserId").(uint)
 			return services.UserService{}.EditUserProfile(req, userId)
 		},

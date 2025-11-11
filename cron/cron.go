@@ -1,17 +1,27 @@
 package cron
 
 import (
-	"github.com/robfig/cron/v3"
+	"journey/common/cache"
 	"log"
+	"time"
+
+	"github.com/robfig/cron/v3"
 )
 
 // RegisterCron 分钟级别的定时任务，最小到分钟级别
 func RegisterCron() {
 	// 创建 cron 实例
 	c := cron.New()
+	rdb := cache.RedisClient
 	//c := cron.New(cron.WithSeconds()) //秒级别的定时器，只能运行秒级的
 	// 每分钟运行一次
 	_, _ = c.AddFunc("* * * * *", func() {
+		RunWithLock(rdb, "minute_task_lock", 2*time.Minute, func() {
+			//log.Println("✅ 分钟任务执行中...")
+			// 在这里调用你的业务逻辑
+			// services.UserService{}.CheckNewUserGiftExpire()
+		})
+
 		//fmt.Println("分钟级定时器执行了")
 
 		// 在这里执行你的脚本或任务

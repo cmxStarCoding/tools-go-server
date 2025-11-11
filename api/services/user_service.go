@@ -1,7 +1,6 @@
 package services
 
 import (
-	"database/sql"
 	"errors"
 	"fmt"
 	"journey/api/validator"
@@ -9,8 +8,6 @@ import (
 	"journey/common/database"
 	"journey/common/middleware"
 	"journey/common/utils"
-	"journey/dao/model"
-	"journey/dao/query"
 	"journey/models"
 	"log"
 	"math/rand"
@@ -33,11 +30,11 @@ var (
 type UserService struct{}
 
 // GetUserByID 根据用户ID获取用户信息
-func (s UserService) GetUserByID(userID uint) *models.UserModel {
+func (s UserService) GetUserByID(userID uint) *models.TUser {
 	// 获取数据库连接
 	db := database.DB
 	// 调用模型方法从数据库中获取用户
-	userInfo := &models.UserModel{}
+	userInfo := &models.TUser{}
 	//db.Where("user_id = ?", userID).First(userInfo)
 	db.First(&userInfo, userID)
 	return userInfo
@@ -55,18 +52,14 @@ func (s UserService) UserLogout(ctx *gin.Context) (string, error) {
 
 func (s UserService) UserLogin(ctx *gin.Context, account string, password string) (map[string]interface{}, error) {
 	// 获取数据库连接
-	db := query.Use(database.DB)
-
-	userInfo, err := db.TUser.WithContext(ctx).Where(
-		db.TUser.Account.Eq(account),
-		db.TUser.Password.Eq(utils.Md5Hash(password)),
-	).First()
-
-	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
+	db := database.DB
+	userInfo := &models.TUser{}
+	result := db.Where("account = ?", account).Where("password = ?", utils.Md5Hash(password)).First(userInfo)
+	if result.Error != nil && errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		return nil, AccountOrPasswordValid
 	}
 
-	jwtToken, _ := middleware.GenerateToken(uint(userInfo.ID), userInfo.Nickname)
+	jwtToken, _ := middleware.GenerateToken(userInfo.ID, userInfo.Nickname)
 
 	var returnData = make(map[string]interface{})
 	returnData["user_info"] = userInfo
@@ -77,38 +70,37 @@ func (s UserService) UserLogin(ctx *gin.Context, account string, password string
 
 func (s UserService) UserRegister(ctx *gin.Context, requestData *validator.RegisterRequest) (map[string]interface{}, error) {
 	// 获取数据库连接
-	db := query.Use(database.DB)
-	_, err := db.TUser.WithContext(ctx).Where(db.TUser.Account.Eq(requestData.Account)).First()
+	db := database.DB
+	userFullInfo := &models.UserFullModel{}
+	err := db.Where("account = ?", requestData.Account).First(userFullInfo).Error
+	viper.SetConfigFile("../../../common/config.ini")
+	viper.ReadInConfig()
 	if err == nil {
 		return nil, fmt.Errorf("该账号已被注册")
 	}
+	userFullInfo.Account = requestData.Account
+	userFullInfo.Password = utils.Md5Hash(requestData.Password)
+	userFullInfo.Nickname = requestData.Account
+	userFullInfo.AvatarUrl = viper.GetString("app.domain") + "/static/avatar1.png"
 
-	viper.SetConfigFile("./common/config.ini")
-	viper.ReadInConfig()
-	createErr := db.TUser.WithContext(ctx).Create(&model.TUser{
-		Account:       requestData.Account,
-		Password:      utils.Md5Hash(requestData.Password),
-		Nickname:      requestData.Account,
-		AvatarURL:     viper.GetString("app.domain") + "/static/avatar1.png",
-		VipExpireTime: sql.NullTime{Valid: false}, //,
-	})
-	if createErr != nil {
-		return nil, fmt.Errorf("注册失败" + createErr.Error())
+	err = database.DB.Create(userFullInfo).Error
+	if err != nil {
+		return nil, err
 	}
-
-	userInfo, _ := db.TUser.WithContext(ctx).Where(db.TUser.Account.Eq(requestData.Account)).First()
+	userInfo := &models.TUser{}
+	db.Where("account = ?", requestData.Account).First(userInfo)
 
 	var returnData = make(map[string]interface{})
-	jwtToken, _ := middleware.GenerateToken(uint(userInfo.ID), userInfo.Nickname)
+	jwtToken, _ := middleware.GenerateToken(userInfo.ID, userInfo.Nickname)
 	returnData["user_info"] = userInfo
 	returnData["jwt_token"] = jwtToken
 	returnData["expire"] = time.Now().Add(7 * 24 * time.Hour)
 	return returnData, nil
 }
 
-func (s UserService) EditUserProfile(requestData *validator.EditProfileRequest, userId uint) (*models.UserModel, error) {
+func (s UserService) EditUserProfile(requestData *validator.EditProfileRequest, userId uint) (*models.TUser, error) {
 
-	userInfo := &models.UserModel{}
+	userInfo := &models.TUser{}
 
 	result := database.DB.Where("id = ?", userId).First(userInfo)
 

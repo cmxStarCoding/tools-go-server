@@ -4,7 +4,7 @@ import (
 	"gorm.io/gorm"
 )
 
-// UserModel 用户模型
+// TUser 用户模型
 type UserFullModel struct {
 	ID            uint           `gorm:"column:id" json:"id"`
 	Phone         string         `gorm:"column:phone" json:"phone"`
