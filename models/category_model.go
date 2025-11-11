@@ -16,7 +16,7 @@ type CategoryModel struct {
 	DeletedAt   gorm.DeletedAt `gorm:"column:deleted_at" json:"deleted_at"`
 
 	Children []CategoryModel `gorm:"foreignKey:pid" json:"children"`
-	Tools    []ToolsModel    `gorm:"foreignKey:CategoryId" json:"tools"`
+	Tools    []TToolsModel   `gorm:"foreignKey:CategoryId" json:"tools"`
 }
 
 func (CategoryModel) TableName() string {

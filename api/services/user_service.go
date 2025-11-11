@@ -71,7 +71,7 @@ func (s UserService) UserLogin(ctx *gin.Context, account string, password string
 func (s UserService) UserRegister(ctx *gin.Context, requestData *validator.RegisterRequest) (map[string]interface{}, error) {
 	// 获取数据库连接
 	db := database.DB
-	userFullInfo := &models.UserFullModel{}
+	userFullInfo := &models.TUserFullModel{}
 	err := db.Where("account = ?", requestData.Account).First(userFullInfo).Error
 	viper.SetConfigFile("../../../common/config.ini")
 	viper.ReadInConfig()
@@ -121,7 +121,7 @@ func (s UserService) EditUserProfile(requestData *validator.EditProfileRequest, 
 
 func (s UserService) EditPassword(requestData *validator.EditPasswordRequest, UserId uint) (string, error) {
 
-	userInfo := &models.UserFullModel{}
+	userInfo := &models.TUserFullModel{}
 	result := database.DB.Where("id = ?", UserId).Select("ID", "Password").First(userInfo)
 	if result.Error != nil && errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		return "ok", ErrUserNotFound
@@ -147,7 +147,7 @@ func (s UserService) EditPassword(requestData *validator.EditPasswordRequest, Us
 
 func (s UserService) ForgetPasswordReset(requestData *validator.ForgetPasswordResetRequest) (string, error) {
 
-	user := &models.UserFullModel{}
+	user := &models.TUserFullModel{}
 	result := database.DB.Where("account = ?", requestData.Account).First(user)
 	if result.Error != nil && errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		return "ok", ErrUserNotFound
@@ -161,7 +161,7 @@ func (s UserService) ForgetPasswordReset(requestData *validator.ForgetPasswordRe
 	}
 
 	//查询最新一条邮箱验证码
-	userResetPassword := &models.UserResetPasswordModel{}
+	userResetPassword := &models.TUserResetPasswordModel{}
 	userResetPasswordResult := database.DB.Where("account = ?", requestData.Account).Last(userResetPassword)
 	if userResetPasswordResult.Error != nil && errors.Is(userResetPasswordResult.Error, gorm.ErrRecordNotFound) {
 		return "ok", EmailVerifyRecordNotFound
@@ -180,7 +180,7 @@ func (s UserService) SendEmailCode(requestData *validator.SendEmailCodeRequest) 
 
 	todayStart := time.Now().Truncate(24 * time.Hour)
 	var sendEmailCount int64
-	countResult := database.DB.Model(&models.UserResetPasswordModel{}).Where("created_at > ?", todayStart).Count(&sendEmailCount)
+	countResult := database.DB.Model(&models.TUserResetPasswordModel{}).Where("created_at > ?", todayStart).Count(&sendEmailCount)
 	if countResult.Error != nil {
 		return "", fmt.Errorf("查询统计失败")
 	}
@@ -219,7 +219,7 @@ func (s UserService) SendEmailCode(requestData *validator.SendEmailCodeRequest) 
 	if err != nil {
 		return "", fmt.Errorf("发送邮件时发生错误")
 	}
-	userResetPassword := &models.UserResetPasswordModel{
+	userResetPassword := &models.TUserResetPasswordModel{
 		Account:  requestData.Account,
 		UseEmail: requestData.UseEmail,
 		Code:     strconv.Itoa(code),
